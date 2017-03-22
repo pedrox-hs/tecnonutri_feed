@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Tecnonutri Feed</string>
+    <string name="meal_date">Refeição de %s</string>
+    <string name="date_format">dd/MM/yyyy</string>
+    <string name="total_consumed">Total consumido</string>
+
+    <string name="nutritional_energy">Cal</string>
+    <string name="nutritional_carbohydrate">Carb</string>
+    <string name="nutritional_protein">Prot</string>
+    <string name="nutritional_fat">Gord</string>
+
+    <string name="weight">%sg</string>
+    <string name="qty_food">%1$s %2$s (%3$sg)</string>
+    <string name="qty_energy">%s kcal</string>
+
+    <string name="fail_to_load_try_again">Falha ao carregar. Tente novamente.</string>
+
+</resources>

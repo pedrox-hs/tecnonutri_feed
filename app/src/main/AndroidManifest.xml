@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="br.com.pedrosilva.tecnonutri">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:name=".AndroidApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".presentation.ui.activities.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".presentation.ui.activities.ProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".presentation.ui.activities.PostDetailsActivity" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="ca5d06f18cd3160a7fa3accc2549e76e4172ccc5" />
+
+    </application>
+
+</manifest>

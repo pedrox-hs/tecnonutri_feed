@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="fill_horizontal"
+    android:paddingBottom="8dp"
+    android:paddingEnd="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingStart="16dp"
+    android:paddingTop="8dp"
+    app:alignmentMode="alignBounds"
+    app:columnCount="4"
+    app:orientation="vertical"
+    app:rowCount="2"
+    app:useDefaultMargins="true">
+
+    <TextView
+        android:text="@string/nutritional_energy"
+        android:textStyle="bold"
+        app:layout_columnWeight="1"
+        app:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/tv_nutritional_energy"
+        app:layout_columnWeight="1"
+        app:layout_gravity="center" />
+
+    <TextView
+        android:text="@string/nutritional_carbohydrate"
+        android:textStyle="bold"
+        app:layout_column="1"
+        app:layout_columnWeight="1"
+        app:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/tv_nutritional_carbohydrate"
+        app:layout_columnWeight="1"
+        app:layout_gravity="center" />
+
+    <TextView
+        android:text="@string/nutritional_protein"
+        android:textStyle="bold"
+        app:layout_columnWeight="1"
+        app:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/tv_nutritional_protein"
+        app:layout_columnWeight="1"
+        app:layout_gravity="center" />
+
+    <TextView
+        android:text="@string/nutritional_fat"
+        android:textStyle="bold"
+        app:layout_columnWeight="1"
+        app:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/tv_nutritional_fat"
+        app:layout_columnWeight="1"
+        app:layout_gravity="center" />
+
+</android.support.v7.widget.GridLayout>

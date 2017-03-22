@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cardHeaderFeed">#FFFFFFFF</color>
+    <color name="colorIcon">#212121</color>
+</resources>
