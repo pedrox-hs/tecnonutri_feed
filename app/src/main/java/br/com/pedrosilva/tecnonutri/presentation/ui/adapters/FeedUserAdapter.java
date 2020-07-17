@@ -74,7 +74,7 @@ public class FeedUserAdapter extends GenericAdapter<FeedItem, RecyclerView.ViewH
             pbLoadingImage.setVisibility(View.VISIBLE);
 
             if (feedItem != null) {
-                Picasso.with(context)
+                Picasso.get()
                         .load(feedItem.getImageUrl())
                         .fit()
                         .centerCrop()
@@ -85,7 +85,8 @@ public class FeedUserAdapter extends GenericAdapter<FeedItem, RecyclerView.ViewH
                             }
 
                             @Override
-                            public void onError() {
+                            public void onError(Exception e) {
+                                // do nothing
                             }
                         });
             } else {

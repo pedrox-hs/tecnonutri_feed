@@ -27,8 +27,6 @@ import com.squareup.picasso.Picasso
 
 class ProfileActivity : BaseActivity(), ProfilePresenter.View, AppBarLayout.OnOffsetChangedListener {
 
-    private val PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.9f
-
     private var userId = 0
     private var title = ""
     private var timestamp = 0
@@ -37,7 +35,7 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View, AppBarLayout.OnOf
     private var profilePresenter: ProfilePresenter? = null
     private var feedUserAdapter: FeedUserAdapter? = null
     private var gridLayoutManager: GridLayoutManager? = null
-    private var endlessRecyclerViewScrollListener: EndlessRecyclerViewScrollListener? = null
+    private lateinit var endlessRecyclerViewScrollListener: EndlessRecyclerViewScrollListener
 
     private var swipeRefresh: SwipeRefreshLayout? = null
     private var collapsingToolbarLayout: CollapsingToolbarLayout? = null
@@ -62,14 +60,14 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View, AppBarLayout.OnOf
     }
 
     private fun bindElements() {
-        collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar) as CollapsingToolbarLayout
-        toolbar = findViewById(R.id.toolbar) as Toolbar
-        appBar = findViewById(R.id.appbar) as AppBarLayout
-        ivProfileImage = findViewById(R.id.iv_profile_image) as ImageView
-        tvProfileName = findViewById(R.id.tv_profile_name) as TextView
-        tvGeneralGoal = findViewById(R.id.tv_general_goal) as TextView
-        rvFeedUser = findViewById(R.id.rv_feed_user) as RecyclerView
-        swipeRefresh = findViewById(R.id.swipe_refresh) as SwipeRefreshLayout
+        collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar)
+        toolbar = findViewById(R.id.toolbar)
+        appBar = findViewById(R.id.appbar)
+        ivProfileImage = findViewById(R.id.iv_profile_image)
+        tvProfileName = findViewById(R.id.tv_profile_name)
+        tvGeneralGoal = findViewById(R.id.tv_general_goal)
+        rvFeedUser = findViewById(R.id.rv_feed_user)
+        swipeRefresh = findViewById(R.id.swipe_refresh)
     }
 
     private fun init() {
@@ -80,7 +78,7 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View, AppBarLayout.OnOf
         setupRecyclerView()
 
         tvProfileName!!.text = title
-        swipeRefresh!!.setOnRefreshListener({ profilePresenter!!.refresh(userId) })
+        swipeRefresh!!.setOnRefreshListener { profilePresenter!!.refresh(userId) }
 
         profilePresenter = ProfilePresenterImpl(
                 ThreadExecutor.getInstance(),
@@ -97,10 +95,10 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View, AppBarLayout.OnOf
 
         gridLayoutManager!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                if (feedUserAdapter!!.isListEnded || position < (feedUserAdapter!!.itemCount - 1)) {
-                    return 1
+                return if (feedUserAdapter!!.isListEnded || position < (feedUserAdapter!!.itemCount - 1)) {
+                    1
                 } else {
-                    return 3
+                    3
                 }
             }
         }
@@ -116,10 +114,10 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View, AppBarLayout.OnOf
                 }
             }
         }
-        feedUserAdapter!!.setRetryClickListener({
-            endlessRecyclerViewScrollListener!!.resetState()
+        feedUserAdapter!!.setRetryClickListener {
+            endlessRecyclerViewScrollListener.resetState()
             profilePresenter!!.loadMore(userId, nextPage, timestamp)
-        })
+        }
     }
 
     private fun setupToolbar(title: String) {
@@ -140,7 +138,7 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View, AppBarLayout.OnOf
         if (isFirstLoad || swipeRefresh!!.isRefreshing) {
             isFirstLoad = false
 
-            Picasso.with(this)
+            Picasso.get()
                     .load(profile.imageUrl)
                     .placeholder(R.drawable.profile_image_placeholder)
                     .error(R.drawable.profile_image_placeholder)
@@ -155,7 +153,7 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View, AppBarLayout.OnOf
 
             feedUserAdapter!!.items = feedItems
             swipeRefresh!!.isRefreshing = false
-            endlessRecyclerViewScrollListener!!.resetState()
+            endlessRecyclerViewScrollListener.resetState()
             rvFeedUser!!.clearOnScrollListeners()
             rvFeedUser!!.addOnScrollListener(endlessRecyclerViewScrollListener)
         } else {
@@ -195,8 +193,11 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View, AppBarLayout.OnOf
     }
 
     companion object {
-        private val EXTRA_PROFILE_ID: String = "EXTRA_PROFILE_ID"
-        private val EXTRA_PROFILE_NAME: String = "EXTRA_PROFILE_NAME"
+
+        private const val PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.9f
+
+        private const val EXTRA_PROFILE_ID = "EXTRA_PROFILE_ID"
+        private const val EXTRA_PROFILE_NAME = "EXTRA_PROFILE_NAME"
 
         fun getCallingIntent(context: Context, id: Int, name: String): Intent {
             val intent = Intent(context, ProfileActivity::class.java)

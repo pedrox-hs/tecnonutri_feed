@@ -152,7 +152,7 @@ public class FeedAdapter extends GenericAdapter<FeedItem, RecyclerView.ViewHolde
             String kcal = resources.getString(R.string.qty_energy, AppUtil.formatKcal(feedItem.getEnergy()));
             tvEnergy.setText(kcal);
 
-            Picasso.with(context)
+            Picasso.get()
                     .load(profile.getImageUrl())
                     .placeholder(R.drawable.profile_image_placeholder)
                     .error(R.drawable.profile_image_placeholder)
@@ -161,7 +161,7 @@ public class FeedAdapter extends GenericAdapter<FeedItem, RecyclerView.ViewHolde
                     .centerCrop()
                     .into(ivProfileImage);
 
-            Picasso.with(context)
+            Picasso.get()
                     .load(feedItem.getImageUrl())
                     .fit()
                     .centerCrop()
@@ -172,7 +172,8 @@ public class FeedAdapter extends GenericAdapter<FeedItem, RecyclerView.ViewHolde
                         }
 
                         @Override
-                        public void onError() {
+                        public void onError(Exception e) {
+                            // do nothing
                         }
                     });
         }

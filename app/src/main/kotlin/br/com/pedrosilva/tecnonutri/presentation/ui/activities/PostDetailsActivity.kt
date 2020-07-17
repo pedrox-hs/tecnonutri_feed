@@ -22,11 +22,10 @@ import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
 import br.com.pedrosilva.tecnonutri.util.AppUtil
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import java.lang.Exception
 import java.util.*
 
 class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
-
-    private val TAG = PostDetailsActivity::class.java.name
 
     private var feedHash = ""
     private var itemDate: Date? = null
@@ -68,21 +67,21 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
     }
 
     private fun bindElements() {
-        rlHeader = findViewById(R.id.rl_header) as RelativeLayout
-        ivProfileImage = findViewById(R.id.iv_profile_image) as ImageView
-        tvProfileName = findViewById(R.id.tv_profile_name) as TextView
-        tvGeneralGoal = findViewById(R.id.tv_profile_general_goal) as TextView
-        ivMeal = findViewById(R.id.iv_meal) as ImageView
-        pbLoadingImage = findViewById(R.id.pb_loading_image) as ProgressBar
-        swipeRefresh = findViewById(R.id.swipe_refresh) as SwipeRefreshLayout
-        rvFood = findViewById(R.id.rv_food) as RecyclerView
-        cbLike = findViewById(R.id.cb_like) as CheckBox
+        rlHeader = findViewById(R.id.rl_header)
+        ivProfileImage = findViewById(R.id.iv_profile_image)
+        tvProfileName = findViewById(R.id.tv_profile_name)
+        tvGeneralGoal = findViewById(R.id.tv_profile_general_goal)
+        ivMeal = findViewById(R.id.iv_meal)
+        pbLoadingImage = findViewById(R.id.pb_loading_image)
+        swipeRefresh = findViewById(R.id.swipe_refresh)
+        rvFood = findViewById(R.id.rv_food)
+        cbLike = findViewById(R.id.cb_like)
     }
 
     private fun init() {
         setupRecyclerView();
 
-        feedHash = intent.getStringExtra(EXTRA_FEED_ITEM_HASH)
+        feedHash = intent.getStringExtra(EXTRA_FEED_ITEM_HASH) ?: ""
         itemDate = intent.getSerializableExtra(EXTRA_FEED_ITEM_DATE) as Date
 
         val dateFormatted = AppUtil.formatDate(itemDate)
@@ -95,11 +94,11 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
             }
         }
 
-        swipeRefresh!!.setOnRefreshListener({ feedItemPresenter!!.reload() })
+        swipeRefresh!!.setOnRefreshListener { feedItemPresenter!!.reload() }
 
-        cbLike!!.setOnClickListener({ view ->
+        cbLike!!.setOnClickListener { view ->
             feedItemPresenter!!.changeLike(feedHash, (view as CheckBox).isChecked)
-        })
+        }
 
         feedItemPresenter = FeedItemPresenterImpl(
                 ThreadExecutor.getInstance(),
@@ -114,7 +113,7 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
         profile = item.profile
         feedItem = item
 
-        Picasso.with(this)
+        Picasso.get()
                 .load(item.profile.imageUrl)
                 .placeholder(R.drawable.profile_image_placeholder)
                 .error(R.drawable.profile_image_placeholder)
@@ -123,16 +122,16 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
                 .centerCrop()
                 .into(ivProfileImage)
 
-        Picasso.with(this)
+        Picasso.get()
                 .load(item.imageUrl)
                 .fit()
                 .into(ivMeal, object : Callback {
                     override fun onSuccess() {
-                        pbLoadingImage!!.visibility = View.GONE
+                        pbLoadingImage?.visibility = View.GONE
                     }
 
-                    override fun onError() {
-
+                    override fun onError(e: Exception?) {
+                        // do nothing
                     }
 
                 })
@@ -165,8 +164,9 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
     }
 
     companion object {
-        private val EXTRA_FEED_ITEM_HASH: String = "EXTRA_FEED_ITEM_HASH"
-        private val EXTRA_FEED_ITEM_DATE: String = "EXTRA_FEED_ITEM_DATE"
+
+        private const val EXTRA_FEED_ITEM_HASH = "EXTRA_FEED_ITEM_HASH"
+        private const val EXTRA_FEED_ITEM_DATE = "EXTRA_FEED_ITEM_DATE"
 
         fun getCallingIntent(context: Context, feedHash: String, date: Date): Intent {
             val intent = Intent(context, PostDetailsActivity::class.java)
