@@ -14,6 +14,8 @@ import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.SingleOnClickListe
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.setSingleOnClickListener
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_feed_user.view.iv_meal
+import kotlinx.android.synthetic.main.item_feed_user.view.pb_loading_image
 
 class FeedUserAdapter(
     private val feedItemClickListener: FeedItemClickListener
@@ -45,12 +47,10 @@ class FeedUserAdapter(
         private val feedItemClickListener: FeedItemClickListener
     ) : RecyclerView.ViewHolder(view) {
 
-        private val ivMeal: ImageView = view.findViewById(R.id.iv_meal)
-        private val pbLoadingImage: ProgressBar = view.findViewById(R.id.pb_loading_image)
 
-        fun setup(feedItem: FeedItem) {
-            pbLoadingImage.visibility = View.VISIBLE
-            ivMeal.setImageDrawable(null)
+        fun setup(feedItem: FeedItem) = itemView.run {
+            pb_loading_image.visibility = View.VISIBLE
+            iv_meal.setImageDrawable(null)
             itemView.setSingleOnClickListener {
                 feedItemClickListener.invoke(feedItem)
             }
@@ -58,9 +58,9 @@ class FeedUserAdapter(
                 .load(feedItem.imageUrl)
                 .fit()
                 .centerCrop()
-                .into(ivMeal, object : Callback {
+                .into(iv_meal, object : Callback {
                     override fun onSuccess() {
-                        pbLoadingImage.visibility = View.GONE
+                        pb_loading_image.visibility = View.GONE
                     }
 
                     override fun onError(e: Exception) {

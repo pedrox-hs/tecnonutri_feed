@@ -7,6 +7,9 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
 import br.com.pedrosilva.tecnonutri.R
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.setSingleOnClickListener
+import kotlinx.android.synthetic.main.progress.view.ll_error
+import kotlinx.android.synthetic.main.progress.view.progress_bar
+import kotlinx.android.synthetic.main.progress.view.tv_error_message
 
 typealias RetryClickListener = () -> Unit
 
@@ -85,23 +88,19 @@ abstract class GenericAdapter<T, A : RecyclerView.ViewHolder>(
 
     internal inner class ViewHolderLoader(v: View) : RecyclerView.ViewHolder(v) {
 
-        private val progressBar: View = v.findViewById(R.id.progress_bar)
-        private val llError: View = v.findViewById(R.id.ll_error)
-        private val tvErrorMessage: TextView = v.findViewById(R.id.tv_error_message)
-
         @JvmOverloads
         fun setup(
             heightForOne: Int = MATCH_PARENT,
             heightForMore: Int = WRAP_CONTENT
-        ) {
-            val vhLayoutParams = itemView.layoutParams
+        ) = itemView.run {
+            val vhLayoutParams = layoutParams
             if (itemCount == 1) {
                 vhLayoutParams.height = heightForOne
             } else {
                 vhLayoutParams.height = heightForMore
             }
-            itemView.layoutParams = vhLayoutParams
-            llError.setSingleOnClickListener {
+            layoutParams = vhLayoutParams
+            tv_error_message.setSingleOnClickListener {
                 if (retryClickListener != null) {
                     showError = false
                     msgError()
@@ -113,12 +112,12 @@ abstract class GenericAdapter<T, A : RecyclerView.ViewHolder>(
 
         private fun msgError() {
             if (showError) {
-                progressBar.visibility = View.GONE
-                llError.visibility = View.VISIBLE
-                tvErrorMessage.text = errorMessage
+                itemView.progress_bar.visibility = View.GONE
+                itemView.ll_error.visibility = View.VISIBLE
+                itemView.tv_error_message.text = errorMessage
             } else {
-                progressBar.visibility = View.VISIBLE
-                llError.visibility = View.INVISIBLE
+                itemView.progress_bar.visibility = View.VISIBLE
+                itemView.ll_error.visibility = View.INVISIBLE
             }
         }
     }

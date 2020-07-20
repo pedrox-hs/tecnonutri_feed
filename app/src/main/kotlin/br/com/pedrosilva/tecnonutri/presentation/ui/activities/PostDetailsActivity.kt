@@ -3,11 +3,9 @@ package br.com.pedrosilva.tecnonutri.presentation.ui.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.*
+import android.widget.CheckBox
 import br.com.pedrosilva.tecnonutri.R
 import br.com.pedrosilva.tecnonutri.data.repositories.FeedRepositoryImpl
 import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
@@ -18,12 +16,21 @@ import br.com.pedrosilva.tecnonutri.presentation.presenters.FeedItemPresenter
 import br.com.pedrosilva.tecnonutri.presentation.presenters.impl.FeedItemPresenterImpl
 import br.com.pedrosilva.tecnonutri.presentation.ui.adapters.FoodAdapter
 import br.com.pedrosilva.tecnonutri.presentation.ui.components.CircleTransformation
+import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.setSingleOnClickListener
 import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
 import br.com.pedrosilva.tecnonutri.util.AppUtil
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import java.lang.Exception
-import java.util.*
+import kotlinx.android.synthetic.main.activity_post_details.cb_like
+import kotlinx.android.synthetic.main.activity_post_details.iv_meal
+import kotlinx.android.synthetic.main.activity_post_details.iv_profile_image
+import kotlinx.android.synthetic.main.activity_post_details.pb_loading_image
+import kotlinx.android.synthetic.main.activity_post_details.rl_header
+import kotlinx.android.synthetic.main.activity_post_details.rv_food
+import kotlinx.android.synthetic.main.activity_post_details.swipe_refresh
+import kotlinx.android.synthetic.main.activity_post_details.tv_profile_general_goal
+import kotlinx.android.synthetic.main.activity_post_details.tv_profile_name
+import java.util.Date
 
 class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
 
@@ -52,24 +59,15 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
     private var feedItemPresenter: FeedItemPresenterImpl? = null
     private val foodAdapter: FoodAdapter by lazy { FoodAdapter() }
 
-    private var rlHeader: RelativeLayout? = null
-    private var ivProfileImage: ImageView? = null
-    private var tvProfileName: TextView? = null
-    private var tvGeneralGoal: TextView? = null
-    private var ivMeal: ImageView? = null
-    private var cbLike: CheckBox? = null
-
-    private var rvFood: RecyclerView? = null
-    private var swipeRefresh: SwipeRefreshLayout? = null
-    private var pbLoadingImage: ProgressBar? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_details)
+    }
 
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        bindElements()
         bindProgress()
         showProgress()
 
@@ -78,21 +76,7 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
 
     override fun onResume() {
         super.onResume()
-        if (feedItem != null) {
-            cbLike!!.isChecked = feedItemPresenter!!.isLiked(feedHash)
-        }
-    }
-
-    private fun bindElements() {
-        rlHeader = findViewById(R.id.rl_header)
-        ivProfileImage = findViewById(R.id.iv_profile_image)
-        tvProfileName = findViewById(R.id.tv_profile_name)
-        tvGeneralGoal = findViewById(R.id.tv_profile_general_goal)
-        ivMeal = findViewById(R.id.iv_meal)
-        pbLoadingImage = findViewById(R.id.pb_loading_image)
-        swipeRefresh = findViewById(R.id.swipe_refresh)
-        rvFood = findViewById(R.id.rv_food)
-        cbLike = findViewById(R.id.cb_like)
+        cb_like.isChecked = feedItemPresenter?.isLiked(feedHash) ?: false
     }
 
     private fun init() {
@@ -102,24 +86,24 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
         title = getString(R.string.meal_date, dateFormatted)
 
 
-        rlHeader!!.setOnClickListener {
-            if (profile != null) {
-                Navigator.navigateToProfile(this, profile!!.id, profile!!.name)
+        rl_header.setSingleOnClickListener {
+            profile?.also { profile ->
+                Navigator.navigateToProfile(this, profile.id, profile.name)
             }
         }
 
-        swipeRefresh!!.setOnRefreshListener { feedItemPresenter!!.reload() }
+        swipe_refresh.setOnRefreshListener { feedItemPresenter?.reload() }
 
-        cbLike!!.setOnClickListener { view ->
-            feedItemPresenter!!.changeLike(feedHash, (view as CheckBox).isChecked)
+        cb_like.setOnClickListener { view ->
+            feedItemPresenter?.changeLike(feedHash, (view as CheckBox).isChecked)
         }
 
         feedItemPresenter = FeedItemPresenterImpl(
-                ThreadExecutor.instance,
-                MainThreadImpl.instance,
-                this,
-                FeedRepositoryImpl(),
-                feedHash
+            ThreadExecutor.instance,
+            MainThreadImpl.instance,
+            this,
+            FeedRepositoryImpl(),
+            feedHash
         )
     }
 
@@ -128,51 +112,48 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
         feedItem = item
 
         Picasso.get()
-                .load(item.profile.imageUrl)
-                .placeholder(R.drawable.profile_image_placeholder)
-                .error(R.drawable.profile_image_placeholder)
-                .transform(CircleTransformation())
-                .fit()
-                .centerCrop()
-                .into(ivProfileImage)
+            .load(item.profile.imageUrl)
+            .placeholder(R.drawable.profile_image_placeholder)
+            .error(R.drawable.profile_image_placeholder)
+            .transform(CircleTransformation())
+            .fit()
+            .centerCrop()
+            .into(iv_profile_image)
 
         Picasso.get()
-                .load(item.imageUrl)
-                .fit()
-                .into(ivMeal, object : Callback {
-                    override fun onSuccess() {
-                        pbLoadingImage?.visibility = View.GONE
-                    }
+            .load(item.imageUrl)
+            .fit()
+            .into(iv_meal, object : Callback {
+                override fun onSuccess() {
+                    pb_loading_image.visibility = View.GONE
+                }
 
-                    override fun onError(e: Exception?) {
-                        // do nothing
-                    }
+                override fun onError(e: Exception?) {
+                    // do nothing
+                }
+            })
 
-                })
-
-        cbLike!!.isChecked = item.isLiked
-        tvProfileName!!.text = item.profile.name
-        tvGeneralGoal!!.text = item.profile.generalGoal
+        cb_like.isChecked = item.isLiked
+        tv_profile_name.text = item.profile.name
+        tv_profile_general_goal.text = item.profile.generalGoal
         foodAdapter.feedItem = feedItem
 
-        swipeRefresh!!.isRefreshing = false
+        swipe_refresh.isRefreshing = false
     }
 
     override fun onLoadFail(error: Throwable) {
-        swipeRefresh!!.isRefreshing = false
+        swipe_refresh.isRefreshing = false
         showError(getString(R.string.fail_to_load_try_again))
     }
 
     private fun setupRecyclerView() {
-        rvFood!!.layoutManager = LinearLayoutManager(this)
-        rvFood!!.adapter = foodAdapter
+        rv_food.adapter = foodAdapter
     }
 
     override fun onChangeLike(feedHash: String, like: Boolean) {
-
     }
 
     override fun reloadAll() {
-        feedItemPresenter!!.load()
+        feedItemPresenter?.load()
     }
 }

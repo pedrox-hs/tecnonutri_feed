@@ -9,6 +9,12 @@ import br.com.pedrosilva.tecnonutri.R
 import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
 import br.com.pedrosilva.tecnonutri.domain.entities.Food
 import br.com.pedrosilva.tecnonutri.util.AppUtil
+import kotlinx.android.synthetic.main.item_food.view.tv_description
+import kotlinx.android.synthetic.main.item_food.view.tv_qty
+import kotlinx.android.synthetic.main.item_food_nutritional.view.tv_nutritional_carbohydrate
+import kotlinx.android.synthetic.main.item_food_nutritional.view.tv_nutritional_energy
+import kotlinx.android.synthetic.main.item_food_nutritional.view.tv_nutritional_fat
+import kotlinx.android.synthetic.main.item_food_nutritional.view.tv_nutritional_protein
 
 class FoodAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -68,51 +74,37 @@ class FoodAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private inner class ViewHolderFood(view: View) : RecyclerView.ViewHolder(view) {
 
-        private var tvDescription: TextView = view.findViewById(R.id.tv_description)
-        private var tvQty: TextView = view.findViewById(R.id.tv_qty)
-        private var tvNutritionalEnergy: TextView = view.findViewById(R.id.tv_nutritional_energy)
-        private var tvNutritionalCarbohydrate: TextView =
-            view.findViewById(R.id.tv_nutritional_carbohydrate)
-        private var tvNutritionalProtein: TextView = view.findViewById(R.id.tv_nutritional_protein)
-        private var tvNutritionalFat: TextView = view.findViewById(R.id.tv_nutritional_fat)
-
-        fun setup(food: Food) {
+        fun setup(food: Food) = itemView.run {
             val resources = itemView.context.resources
-            tvDescription.text = food.description
-            tvQty.text = resources.getString(
+            tv_description.text = food.description
+            tv_qty.text = resources.getString(
                 R.string.qty_food,
                 AppUtil.formatDecimal(food.amount!!),
                 food.measure,
                 AppUtil.formatWeight(food.weight!!)
             )
-            tvNutritionalEnergy.text =
+            tv_nutritional_energy.text =
                 resources.getString(R.string.qty_energy, AppUtil.formatKcal(food.energy!!))
-            tvNutritionalCarbohydrate.text =
+            tv_nutritional_carbohydrate.text =
                 resources.getString(R.string.weight, AppUtil.formatWeight(food.carbohydrate!!))
-            tvNutritionalProtein.text =
+            tv_nutritional_protein.text =
                 resources.getString(R.string.weight, AppUtil.formatWeight(food.protein!!))
-            tvNutritionalFat.text =
+            tv_nutritional_fat.text =
                 resources.getString(R.string.weight, AppUtil.formatWeight(food.fat!!))
         }
     }
 
     private inner class ViewHolderTotal(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val tvNutritionalEnergy: TextView = view.findViewById(R.id.tv_nutritional_energy)
-        private val tvNutritionalCarbohydrate: TextView =
-            view.findViewById(R.id.tv_nutritional_carbohydrate)
-        private val tvNutritionalProtein: TextView = view.findViewById(R.id.tv_nutritional_protein)
-        private val tvNutritionalFat: TextView = view.findViewById(R.id.tv_nutritional_fat)
-
-        fun setup(feedItem: FeedItem) {
+        fun setup(feedItem: FeedItem) = itemView.run {
             val resources = itemView.context.resources
-            tvNutritionalEnergy.text =
+            tv_nutritional_energy.text =
                 resources.getString(R.string.qty_energy, AppUtil.formatKcal(feedItem.energy!!))
-            tvNutritionalCarbohydrate.text =
+            tv_nutritional_carbohydrate.text =
                 resources.getString(R.string.weight, AppUtil.formatWeight(feedItem.carbohydrate!!))
-            tvNutritionalProtein.text =
+            tv_nutritional_protein.text =
                 resources.getString(R.string.weight, AppUtil.formatWeight(feedItem.protein!!))
-            tvNutritionalFat.text =
+            tv_nutritional_fat.text =
                 resources.getString(R.string.weight, AppUtil.formatWeight(feedItem.fat!!))
         }
     }

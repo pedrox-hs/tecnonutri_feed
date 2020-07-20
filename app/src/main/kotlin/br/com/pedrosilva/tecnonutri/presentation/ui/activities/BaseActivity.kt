@@ -4,19 +4,14 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import br.com.pedrosilva.tecnonutri.R
 import br.com.pedrosilva.tecnonutri.presentation.ui.BaseView
-import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.SingleOnClickListener
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.setSingleOnClickListener
+import kotlinx.android.synthetic.main.progress.ll_error
+import kotlinx.android.synthetic.main.progress.progress_bar
+import kotlinx.android.synthetic.main.progress.tv_error_message
 
 abstract class BaseActivity : AppCompatActivity(), BaseView {
-
-    private lateinit var progressBar: View
-
-    private lateinit var llError: View
-
-    private var tvErrorMessage: TextView? = null
 
     private var hasProgress = false
 
@@ -36,9 +31,9 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
     override fun showError(message: String) {
         Snackbar.make(contentView, message, Snackbar.LENGTH_LONG).show()
         if (hasProgress) {
-            tvErrorMessage!!.text = message
-            llError.visibility = View.VISIBLE
-            progressBar.visibility = View.GONE
+            tv_error_message.text = message
+            ll_error.visibility = View.VISIBLE
+            progress_bar.visibility = View.GONE
         }
     }
 
@@ -72,12 +67,9 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
         val v = findViewById<View>(R.id.rl_progress)
         if (v != null) {
             hasProgress = true
-            progressBar = v.findViewById(R.id.progress_bar)
-            llError = v.findViewById(R.id.ll_error)
-            tvErrorMessage = v.findViewById<View>(R.id.tv_error_message) as TextView
-            llError.setSingleOnClickListener {
-                llError.visibility = View.INVISIBLE
-                progressBar.visibility = View.VISIBLE
+            ll_error.setSingleOnClickListener {
+                ll_error.visibility = View.INVISIBLE
+                progress_bar.visibility = View.VISIBLE
                 reloadAll()
             }
         }

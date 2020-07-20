@@ -4,14 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v4.content.ContextCompat.getColor
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
-import android.widget.ImageView
-import android.widget.TextView
 import br.com.pedrosilva.tecnonutri.R
 import br.com.pedrosilva.tecnonutri.data.repositories.ProfileRepositoryImpl
 import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
@@ -24,6 +19,14 @@ import br.com.pedrosilva.tecnonutri.presentation.ui.adapters.FeedUserAdapter
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.EndlessRecyclerViewScrollListener
 import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_profile.rv_feed_user
+import kotlinx.android.synthetic.main.activity_profile.swipe_refresh
+import kotlinx.android.synthetic.main.toolbar_profile.appbar
+import kotlinx.android.synthetic.main.toolbar_profile.collapsing_toolbar
+import kotlinx.android.synthetic.main.toolbar_profile.iv_profile_image
+import kotlinx.android.synthetic.main.toolbar_profile.toolbar
+import kotlinx.android.synthetic.main.toolbar_profile.tv_general_goal
+import kotlinx.android.synthetic.main.toolbar_profile.tv_profile_name
 import kotlin.math.abs
 
 class ProfileActivity : BaseActivity(), ProfilePresenter.View,
@@ -44,8 +47,8 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View,
         }
     }
 
-    private var userId = 0
-    private var title = ""
+    private val userId by lazy { intent.getIntExtra(EXTRA_PROFILE_ID, 0) }
+    private val title by lazy { intent.getStringExtra(EXTRA_PROFILE_NAME) ?: "" }
     private var timestamp = 0
     private var nextPage = 0
 
@@ -58,53 +61,27 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View,
     }
     private lateinit var endlessRecyclerViewScrollListener: EndlessRecyclerViewScrollListener
 
-    private var swipeRefresh: SwipeRefreshLayout? = null
-    private var collapsingToolbarLayout: CollapsingToolbarLayout? = null
-    private var appBar: AppBarLayout? = null
-    private var toolbar: Toolbar? = null
-
-    private var ivProfileImage: ImageView? = null
-    private var tvProfileName: TextView? = null
-    private var tvGeneralGoal: TextView? = null
-    private var rvFeedUser: RecyclerView? = null
-
     private var isFirstLoad = true
     private var isTheTitleVisible = false
         set(value) {
             if (value != field) {
                 field = value
-                collapsingToolbarLayout?.isTitleEnabled = value
+                collapsing_toolbar.isTitleEnabled = value
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
-
-        bindElements()
-        init()
     }
 
-    private fun bindElements() {
-        collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar)
-        toolbar = findViewById(R.id.toolbar)
-        appBar = findViewById(R.id.appbar)
-        ivProfileImage = findViewById(R.id.iv_profile_image)
-        tvProfileName = findViewById(R.id.tv_profile_name)
-        tvGeneralGoal = findViewById(R.id.tv_general_goal)
-        rvFeedUser = findViewById(R.id.rv_feed_user)
-        swipeRefresh = findViewById(R.id.swipe_refresh)
-    }
-
-    private fun init() {
-        userId = intent.getIntExtra(EXTRA_PROFILE_ID, 0)
-        title = intent.getStringExtra(EXTRA_PROFILE_NAME) as String
-
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
         setupToolbar(title)
         setupRecyclerView()
 
-        tvProfileName!!.text = title
-        swipeRefresh!!.setOnRefreshListener { profilePresenter!!.refresh(userId) }
+        tv_profile_name.text = title
+        swipe_refresh.setOnRefreshListener { profilePresenter?.refresh(userId) }
 
         profilePresenter = ProfilePresenterImpl(
             ThreadExecutor.instance,
@@ -121,8 +98,8 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View,
                 if (feedUserAdapter.isListEnded || position < (feedUserAdapter.itemCount - 1)) 1
                 else 3
         }
-        rvFeedUser!!.layoutManager = gridLayoutManager
-        rvFeedUser!!.adapter = feedUserAdapter
+        rv_feed_user.layoutManager = gridLayoutManager
+        rv_feed_user.adapter = feedUserAdapter
 
         endlessRecyclerViewScrollListener =
             EndlessRecyclerViewScrollListener(gridLayoutManager) { _: Int, _: RecyclerView ->
@@ -139,20 +116,15 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View,
     }
 
     private fun setupToolbar(title: String) {
-        appBar!!.addOnOffsetChangedListener(this)
+        appbar.addOnOffsetChangedListener(this)
 
         setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        collapsingToolbarLayout!!.title = title
-        collapsingToolbarLayout!!.isTitleEnabled = false
-        collapsingToolbarLayout!!.setExpandedTitleColor(
-            ContextCompat.getColor(
-                this,
-                android.R.color.transparent
-            )
-        )
+        collapsing_toolbar.title = title
+        collapsing_toolbar.isTitleEnabled = false
+        collapsing_toolbar.setExpandedTitleColor(getColor(this, android.R.color.transparent))
     }
 
     override fun onLoadProfile(
@@ -163,7 +135,7 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View,
     ) {
         this.timestamp = timestamp
         this.nextPage = page + 1
-        if (isFirstLoad || swipeRefresh!!.isRefreshing) {
+        if (isFirstLoad || swipe_refresh.isRefreshing) {
             isFirstLoad = false
 
             Picasso.get()
@@ -172,18 +144,18 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View,
                 .error(R.drawable.profile_image_placeholder)
                 .fit()
                 .centerCrop()
-                .into(ivProfileImage)
+                .into(iv_profile_image)
 
-            collapsingToolbarLayout!!.title = profile.name
-            tvProfileName!!.text = profile.name
+            collapsing_toolbar.title = profile.name
+            tv_profile_name.text = profile.name
 
-            tvGeneralGoal!!.text = profile.generalGoal
+            tv_general_goal!!.text = profile.generalGoal
 
             feedUserAdapter.items = feedItems
-            swipeRefresh!!.isRefreshing = false
+            swipe_refresh.isRefreshing = false
             endlessRecyclerViewScrollListener.resetState()
-            rvFeedUser!!.clearOnScrollListeners()
-            rvFeedUser!!.addOnScrollListener(endlessRecyclerViewScrollListener)
+            rv_feed_user.clearOnScrollListeners()
+            rv_feed_user.addOnScrollListener(endlessRecyclerViewScrollListener)
         } else {
             feedUserAdapter.appendItems(feedItems)
         }
@@ -192,7 +164,7 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View,
     }
 
     override fun onLoadFail(error: Throwable) {
-        swipeRefresh!!.isRefreshing = false
+        swipe_refresh.isRefreshing = false
         val msgError = getString(R.string.fail_to_load_try_again)
         feedUserAdapter.notifyError(msgError)
         showError(msgError)

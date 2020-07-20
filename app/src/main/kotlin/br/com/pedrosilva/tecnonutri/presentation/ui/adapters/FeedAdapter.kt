@@ -4,11 +4,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
-import android.widget.TextView
 import br.com.pedrosilva.tecnonutri.R
 import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
 import br.com.pedrosilva.tecnonutri.domain.entities.Profile
@@ -20,6 +15,15 @@ import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.setSingleOnClickLi
 import br.com.pedrosilva.tecnonutri.util.AppUtil
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_feed.view.cb_like
+import kotlinx.android.synthetic.main.item_feed.view.iv_meal
+import kotlinx.android.synthetic.main.item_feed.view.iv_profile_image
+import kotlinx.android.synthetic.main.item_feed.view.pb_loading_image
+import kotlinx.android.synthetic.main.item_feed.view.rl_header
+import kotlinx.android.synthetic.main.item_feed.view.tv_energy
+import kotlinx.android.synthetic.main.item_feed.view.tv_meal_date
+import kotlinx.android.synthetic.main.item_feed.view.tv_profile_general_goal
+import kotlinx.android.synthetic.main.item_feed.view.tv_profile_name
 
 class FeedAdapter : GenericAdapter<FeedItem, RecyclerView.ViewHolder>(true) {
 
@@ -71,44 +75,35 @@ class FeedAdapter : GenericAdapter<FeedItem, RecyclerView.ViewHolder>(true) {
         private val changeLikeListener: ChangeLikeListener?
     ) : RecyclerView.ViewHolder(view) {
 
-        private val tvProfileName: TextView = view.findViewById(R.id.tv_profile_name)
-        private val ivProfileImage: ImageView = view.findViewById(R.id.iv_profile_image)
-        private val tvProfileGeneralGoal: TextView = view.findViewById(R.id.tv_profile_general_goal)
-        private val ivMeal: ImageView = view.findViewById(R.id.iv_meal)
-        private val pbLoadingImage: ProgressBar = view.findViewById(R.id.pb_loading_image)
-        private val tvMealDate: TextView = view.findViewById(R.id.tv_meal_date)
-        private val tvEnergy: TextView = view.findViewById(R.id.tv_energy)
-        private val rlHeader: RelativeLayout = view.findViewById(R.id.rl_header)
-        private val cbLike: CheckBox = view.findViewById(R.id.cb_like)
-
-        fun bindElements(feedItem: FeedItem) {
+        fun bindElements(feedItem: FeedItem) = itemView.run {
             bindEvents(feedItem)
 
             val profile = feedItem.profile
             val resources = itemView.context.resources
             val dateFormatted = AppUtil.formatDate(feedItem.date)
 
-            ivProfileImage.setImageResource(R.drawable.profile_image_placeholder)
-            ivMeal.setImageDrawable(null)
-            pbLoadingImage.visibility = View.VISIBLE
-            cbLike.isChecked = feedItem.isLiked
-            tvProfileName.text = profile.name
-            tvProfileGeneralGoal.text = profile.generalGoal
-            tvMealDate.text = resources.getString(R.string.meal_date, dateFormatted)
-            tvEnergy.text = resources.getString(R.string.qty_energy, AppUtil.formatKcal(feedItem.energy!!))
+            iv_profile_image.setImageResource(R.drawable.profile_image_placeholder)
+            iv_meal.setImageDrawable(null)
+            pb_loading_image.visibility = View.VISIBLE
+            cb_like.isChecked = feedItem.isLiked
+            tv_profile_name.text = profile.name
+            tv_profile_general_goal.text = profile.generalGoal
+            tv_meal_date.text = resources.getString(R.string.meal_date, dateFormatted)
+            tv_energy.text =
+                resources.getString(R.string.qty_energy, AppUtil.formatKcal(feedItem.energy!!))
 
             loadImages(profile, feedItem)
         }
 
         private fun bindEvents(feedItem: FeedItem) {
-            cbLike.setOnCheckedChangeListener { _, checked ->
+            itemView.cb_like.setOnCheckedChangeListener { _, checked ->
                 changeLikeListener?.invoke(feedItem.id, checked)
+            }
+            itemView.rl_header.setSingleOnClickListener {
+                profileClickListener?.invoke(feedItem.profile)
             }
             itemView.setSingleOnClickListener {
                 feedItemClickListener?.invoke(feedItem)
-            }
-            rlHeader.setSingleOnClickListener {
-                profileClickListener?.invoke(feedItem.profile)
             }
         }
 
@@ -120,15 +115,15 @@ class FeedAdapter : GenericAdapter<FeedItem, RecyclerView.ViewHolder>(true) {
                 .transform(CircleTransformation())
                 .fit()
                 .centerCrop()
-                .into(ivProfileImage)
+                .into(itemView.iv_profile_image)
 
             Picasso.get()
                 .load(feedItem.imageUrl)
                 .fit()
                 .centerCrop()
-                .into(ivMeal, object : Callback {
+                .into(itemView.iv_meal, object : Callback {
                     override fun onSuccess() {
-                        pbLoadingImage.visibility = View.GONE
+                        itemView.pb_loading_image.visibility = View.GONE
                     }
 
                     override fun onError(e: Exception) {
