@@ -27,13 +27,30 @@ import java.util.*
 
 class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
 
-    private var feedHash = ""
-    private var itemDate: Date? = null
+    companion object {
+
+        private const val EXTRA_FEED_ITEM_HASH = "EXTRA_FEED_ITEM_HASH"
+        private const val EXTRA_FEED_ITEM_DATE = "EXTRA_FEED_ITEM_DATE"
+
+        fun getCallingIntent(context: Context, feedHash: String, date: Date): Intent {
+            val intent = Intent(context, PostDetailsActivity::class.java)
+            intent.putExtra(EXTRA_FEED_ITEM_HASH, feedHash)
+            intent.putExtra(EXTRA_FEED_ITEM_DATE, date)
+            return intent
+        }
+    }
+
+    private val feedHash by lazy {
+        intent.getStringExtra(EXTRA_FEED_ITEM_HASH) ?: ""
+    }
+    private val itemDate: Date by lazy {
+        intent.getSerializableExtra(EXTRA_FEED_ITEM_DATE) as? Date ?: Date()
+    }
     private var profile: Profile? = null
     private var feedItem: FeedItem? = null
 
     private var feedItemPresenter: FeedItemPresenterImpl? = null
-    private var foodAdapter: FoodAdapter? = null
+    private val foodAdapter: FoodAdapter by lazy { FoodAdapter() }
 
     private var rlHeader: RelativeLayout? = null
     private var ivProfileImage: ImageView? = null
@@ -79,10 +96,7 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
     }
 
     private fun init() {
-        setupRecyclerView();
-
-        feedHash = intent.getStringExtra(EXTRA_FEED_ITEM_HASH) ?: ""
-        itemDate = intent.getSerializableExtra(EXTRA_FEED_ITEM_DATE) as Date
+        setupRecyclerView()
 
         val dateFormatted = AppUtil.formatDate(itemDate)
         title = getString(R.string.meal_date, dateFormatted)
@@ -101,10 +115,10 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
         }
 
         feedItemPresenter = FeedItemPresenterImpl(
-                ThreadExecutor.getInstance(),
-                MainThreadImpl.getInstance(),
+                ThreadExecutor.instance,
+                MainThreadImpl.instance,
                 this,
-                FeedRepositoryImpl(this),
+                FeedRepositoryImpl(),
                 feedHash
         )
     }
@@ -139,19 +153,18 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
         cbLike!!.isChecked = item.isLiked
         tvProfileName!!.text = item.profile.name
         tvGeneralGoal!!.text = item.profile.generalGoal
-        foodAdapter!!.setFoodItem(feedItem)
+        foodAdapter.feedItem = feedItem
 
         swipeRefresh!!.isRefreshing = false
     }
 
-    override fun onLoadFail(t: Throwable?) {
+    override fun onLoadFail(error: Throwable) {
         swipeRefresh!!.isRefreshing = false
         showError(getString(R.string.fail_to_load_try_again))
     }
 
     private fun setupRecyclerView() {
-        foodAdapter = FoodAdapter(this)
-        rvFood!!.layoutManager = LinearLayoutManager(this);
+        rvFood!!.layoutManager = LinearLayoutManager(this)
         rvFood!!.adapter = foodAdapter
     }
 
@@ -161,18 +174,5 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
 
     override fun reloadAll() {
         feedItemPresenter!!.load()
-    }
-
-    companion object {
-
-        private const val EXTRA_FEED_ITEM_HASH = "EXTRA_FEED_ITEM_HASH"
-        private const val EXTRA_FEED_ITEM_DATE = "EXTRA_FEED_ITEM_DATE"
-
-        fun getCallingIntent(context: Context, feedHash: String, date: Date): Intent {
-            val intent = Intent(context, PostDetailsActivity::class.java)
-            intent.putExtra(EXTRA_FEED_ITEM_HASH, feedHash)
-            intent.putExtra(EXTRA_FEED_ITEM_DATE, date)
-            return intent
-        }
     }
 }
