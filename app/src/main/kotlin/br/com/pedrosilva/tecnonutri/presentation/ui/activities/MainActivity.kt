@@ -4,10 +4,10 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.R
-import br.com.pedrosilva.tecnonutri.data.repositories.FeedRepositoryImpl
-import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
-import br.com.pedrosilva.tecnonutri.domain.entities.Profile
-import br.com.pedrosilva.tecnonutri.domain.executor.impl.ThreadExecutor
+import com.pedrenrique.tecnonutri.data.repositories.FeedRepositoryImpl
+import com.pedrenrique.tecnonutri.domain.FeedItem
+import com.pedrenrique.tecnonutri.domain.Profile
+import com.pedrenrique.tecnonutri.domain.executor.impl.ThreadExecutor
 import br.com.pedrosilva.tecnonutri.presentation.navigation.Navigator
 import br.com.pedrosilva.tecnonutri.presentation.presenters.FeedPresenter
 import br.com.pedrosilva.tecnonutri.presentation.presenters.impl.FeedPresenterImpl

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.R
-import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
+import com.pedrenrique.tecnonutri.domain.FeedItem
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.FeedItemClickListener
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.setSingleOnClickListener
 import com.squareup.picasso.Callback

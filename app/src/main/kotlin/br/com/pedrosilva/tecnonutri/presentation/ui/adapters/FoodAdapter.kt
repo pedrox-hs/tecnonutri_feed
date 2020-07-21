@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.R
-import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
-import br.com.pedrosilva.tecnonutri.domain.entities.Food
+import com.pedrenrique.tecnonutri.domain.FeedItem
+import com.pedrenrique.tecnonutri.domain.Food
 import br.com.pedrosilva.tecnonutri.util.AppUtil
 import kotlinx.android.synthetic.main.item_food.view.tv_description
 import kotlinx.android.synthetic.main.item_food.view.tv_qty

@@ -6,10 +6,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.CheckBox
 import br.com.pedrosilva.tecnonutri.R
-import br.com.pedrosilva.tecnonutri.data.repositories.FeedRepositoryImpl
-import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
-import br.com.pedrosilva.tecnonutri.domain.entities.Profile
-import br.com.pedrosilva.tecnonutri.domain.executor.impl.ThreadExecutor
+import com.pedrenrique.tecnonutri.data.repositories.FeedRepositoryImpl
+import com.pedrenrique.tecnonutri.domain.FeedItem
+import com.pedrenrique.tecnonutri.domain.Profile
+import com.pedrenrique.tecnonutri.domain.executor.impl.ThreadExecutor
 import br.com.pedrosilva.tecnonutri.presentation.navigation.Navigator
 import br.com.pedrosilva.tecnonutri.presentation.presenters.FeedItemPresenter
 import br.com.pedrosilva.tecnonutri.presentation.presenters.impl.FeedItemPresenterImpl
@@ -52,8 +52,9 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
     private val itemDate: Date by lazy {
         intent.getSerializableExtra(EXTRA_FEED_ITEM_DATE) as? Date ?: Date()
     }
-    private var profile: Profile? = null
     private var feedItem: FeedItem? = null
+    private val profile: Profile?
+        get() = feedItem?.profile
 
     private var feedItemPresenter: FeedItemPresenterImpl? = null
     private val foodAdapter: FoodAdapter by lazy { FoodAdapter() }
@@ -107,7 +108,6 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
     }
 
     override fun onLoadFeedItem(item: FeedItem) {
-        profile = item.profile
         feedItem = item
 
         Picasso.get()

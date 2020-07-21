@@ -23,19 +23,6 @@
                 android:layout_height="wrap_content"
                 android:fitsSystemWindows="true">
 
-                <CheckBox
-                    android:id="@+id/cb_like"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/rl_meal_image"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginTop="-62dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
-                    android:background="@drawable/heart_background"
-                    android:button="@drawable/checkbox_heart" />
-
                 <RelativeLayout
                     android:id="@+id/rl_meal_image"
                     android:layout_width="match_parent"
@@ -121,6 +108,18 @@
                     android:paddingBottom="8dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+                <CheckBox
+                  android:id="@+id/cb_like"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_below="@id/rl_meal_image"
+                  android:layout_alignParentEnd="true"
+                  android:layout_alignParentRight="true"
+                  android:layout_marginTop="-62dp"
+                  android:layout_marginEnd="8dp"
+                  android:layout_marginRight="8dp"
+                  android:background="@drawable/heart_background"
+                  android:button="@drawable/checkbox_heart" />
             </RelativeLayout>
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

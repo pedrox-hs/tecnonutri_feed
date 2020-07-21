@@ -1,7 +1,7 @@
 package br.com.pedrosilva.tecnonutri.presentation.presenters.base
 
-import br.com.pedrosilva.tecnonutri.domain.executor.Executor
-import br.com.pedrosilva.tecnonutri.domain.executor.MainThread
+import com.pedrenrique.tecnonutri.domain.executor.Executor
+import com.pedrenrique.tecnonutri.domain.executor.MainThread
 
 /**
  * This is a base class for all presenters which are communicating with interactors. This base class will hold a

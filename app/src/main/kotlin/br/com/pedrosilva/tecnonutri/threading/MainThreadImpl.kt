@@ -2,7 +2,7 @@ package br.com.pedrosilva.tecnonutri.threading
 
 import android.os.Handler
 import android.os.Looper
-import br.com.pedrosilva.tecnonutri.domain.executor.MainThread
+import com.pedrenrique.tecnonutri.domain.executor.MainThread
 
 /**
  * This class makes sure that the runnable we provide will be run on the main UI thread.

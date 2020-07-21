@@ -12,7 +12,6 @@ apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'realm-android'
 //apply from: "${project.rootDir}/QA/quality.gradle"
 
 android {
@@ -43,6 +42,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -50,18 +50,21 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        incremental = false
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation project(':domain')
+    implementation project(':data')
+
     // general
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'de.hdodenhof:circleimageview:2.1.0'
 
     // android support
-//    implementation 'com.android.support:support-v4:28.0.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -70,10 +73,7 @@ dependencies {
     implementation 'androidx.percentlayout:percentlayout:1.0.0'
 
     // network
-    implementation 'com.squareup.retrofit2:retrofit:2.7.2'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
-    implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
 
     // fabric
     implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {

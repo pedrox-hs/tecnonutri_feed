@@ -1,14 +1,14 @@
 package br.com.pedrosilva.tecnonutri.presentation.presenters.impl
 
-import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
-import br.com.pedrosilva.tecnonutri.domain.executor.Executor
-import br.com.pedrosilva.tecnonutri.domain.executor.MainThread
-import br.com.pedrosilva.tecnonutri.domain.interactors.ChangeLikeInteractor
-import br.com.pedrosilva.tecnonutri.domain.interactors.GetFeedInteractor
-import br.com.pedrosilva.tecnonutri.domain.interactors.base.Interactor
-import br.com.pedrosilva.tecnonutri.domain.interactors.impl.ChangeLikeInteractorImpl
-import br.com.pedrosilva.tecnonutri.domain.interactors.impl.GetFeedInteractorImpl
-import br.com.pedrosilva.tecnonutri.domain.repositories.FeedRepository
+import com.pedrenrique.tecnonutri.domain.FeedItem
+import com.pedrenrique.tecnonutri.domain.executor.Executor
+import com.pedrenrique.tecnonutri.domain.executor.MainThread
+import com.pedrenrique.tecnonutri.domain.interactors.ChangeLikeInteractor
+import com.pedrenrique.tecnonutri.domain.interactors.GetFeedInteractor
+import com.pedrenrique.tecnonutri.domain.interactors.base.Interactor
+import com.pedrenrique.tecnonutri.domain.interactors.impl.ChangeLikeInteractorImpl
+import com.pedrenrique.tecnonutri.domain.interactors.impl.GetFeedInteractorImpl
+import com.pedrenrique.tecnonutri.domain.repositories.FeedRepository
 import br.com.pedrosilva.tecnonutri.presentation.presenters.FeedPresenter
 import br.com.pedrosilva.tecnonutri.presentation.presenters.base.AbstractPresenter
 
@@ -45,6 +45,7 @@ class FeedPresenterImpl(
     }
 
     override fun onFeedRetrieveFailed(error: Throwable) {
+        error.printStackTrace()
         view.onLoadFail(error)
     }
 

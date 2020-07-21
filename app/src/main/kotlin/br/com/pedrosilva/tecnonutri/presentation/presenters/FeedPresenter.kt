@@ -1,6 +1,6 @@
 package br.com.pedrosilva.tecnonutri.presentation.presenters
 
-import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
+import com.pedrenrique.tecnonutri.domain.FeedItem
 import br.com.pedrosilva.tecnonutri.presentation.presenters.base.BasePresenter
 import br.com.pedrosilva.tecnonutri.presentation.ui.BaseView
 

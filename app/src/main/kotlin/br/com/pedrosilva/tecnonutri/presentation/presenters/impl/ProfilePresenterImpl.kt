@@ -1,13 +1,13 @@
 package br.com.pedrosilva.tecnonutri.presentation.presenters.impl
 
-import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
-import br.com.pedrosilva.tecnonutri.domain.entities.Profile
-import br.com.pedrosilva.tecnonutri.domain.executor.Executor
-import br.com.pedrosilva.tecnonutri.domain.executor.MainThread
-import br.com.pedrosilva.tecnonutri.domain.interactors.GetProfileInteractor
-import br.com.pedrosilva.tecnonutri.domain.interactors.base.Interactor
-import br.com.pedrosilva.tecnonutri.domain.interactors.impl.GetProfileInteractorImpl
-import br.com.pedrosilva.tecnonutri.domain.repositories.ProfileRepository
+import com.pedrenrique.tecnonutri.domain.FeedItem
+import com.pedrenrique.tecnonutri.domain.Profile
+import com.pedrenrique.tecnonutri.domain.executor.Executor
+import com.pedrenrique.tecnonutri.domain.executor.MainThread
+import com.pedrenrique.tecnonutri.domain.interactors.GetProfileInteractor
+import com.pedrenrique.tecnonutri.domain.interactors.base.Interactor
+import com.pedrenrique.tecnonutri.domain.interactors.impl.GetProfileInteractorImpl
+import com.pedrenrique.tecnonutri.domain.repositories.ProfileRepository
 import br.com.pedrosilva.tecnonutri.presentation.presenters.ProfilePresenter
 import br.com.pedrosilva.tecnonutri.presentation.presenters.base.AbstractPresenter
 

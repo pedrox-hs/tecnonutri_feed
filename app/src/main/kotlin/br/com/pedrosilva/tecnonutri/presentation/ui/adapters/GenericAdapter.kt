@@ -108,14 +108,14 @@ abstract class GenericAdapter<T, A : RecyclerView.ViewHolder>(
             msgError()
         }
 
-        private fun msgError() {
+        private fun msgError() = itemView.run {
             if (showError) {
-                itemView.progress_bar.visibility = View.GONE
-                itemView.ll_error.visibility = View.VISIBLE
-                itemView.tv_error_message.text = errorMessage
+                progress_bar.visibility = View.GONE
+                ll_error.visibility = View.VISIBLE
+                tv_error_message.text = errorMessage
             } else {
-                itemView.progress_bar.visibility = View.VISIBLE
-                itemView.ll_error.visibility = View.INVISIBLE
+                progress_bar.visibility = View.VISIBLE
+                ll_error.visibility = View.INVISIBLE
             }
         }
     }

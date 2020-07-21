@@ -1,7 +1,7 @@
 package br.com.pedrosilva.tecnonutri.presentation.ui.listeners
 
-import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
-import br.com.pedrosilva.tecnonutri.domain.entities.Profile
+import com.pedrenrique.tecnonutri.domain.FeedItem
+import com.pedrenrique.tecnonutri.domain.Profile
 
 typealias ChangeLikeListener = (feedHash: String, liked: Boolean) -> Unit
 

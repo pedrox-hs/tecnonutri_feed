@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.R
-import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
-import br.com.pedrosilva.tecnonutri.domain.entities.Profile
+import com.pedrenrique.tecnonutri.domain.FeedItem
+import com.pedrenrique.tecnonutri.domain.Profile
 import br.com.pedrosilva.tecnonutri.presentation.ui.components.CircleTransformation
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.ChangeLikeListener
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.FeedItemClickListener

@@ -1,14 +1,14 @@
 package br.com.pedrosilva.tecnonutri.presentation.presenters.impl
 
-import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
-import br.com.pedrosilva.tecnonutri.domain.executor.Executor
-import br.com.pedrosilva.tecnonutri.domain.executor.MainThread
-import br.com.pedrosilva.tecnonutri.domain.interactors.ChangeLikeInteractor
-import br.com.pedrosilva.tecnonutri.domain.interactors.GetFeedItemInteractor
-import br.com.pedrosilva.tecnonutri.domain.interactors.base.Interactor
-import br.com.pedrosilva.tecnonutri.domain.interactors.impl.ChangeLikeInteractorImpl
-import br.com.pedrosilva.tecnonutri.domain.interactors.impl.GetFeedItemInteractorImpl
-import br.com.pedrosilva.tecnonutri.domain.repositories.FeedRepository
+import com.pedrenrique.tecnonutri.domain.FeedItem
+import com.pedrenrique.tecnonutri.domain.executor.Executor
+import com.pedrenrique.tecnonutri.domain.executor.MainThread
+import com.pedrenrique.tecnonutri.domain.interactors.ChangeLikeInteractor
+import com.pedrenrique.tecnonutri.domain.interactors.GetFeedItemInteractor
+import com.pedrenrique.tecnonutri.domain.interactors.base.Interactor
+import com.pedrenrique.tecnonutri.domain.interactors.impl.ChangeLikeInteractorImpl
+import com.pedrenrique.tecnonutri.domain.interactors.impl.GetFeedItemInteractorImpl
+import com.pedrenrique.tecnonutri.domain.repositories.FeedRepository
 import br.com.pedrosilva.tecnonutri.presentation.presenters.FeedItemPresenter
 import br.com.pedrosilva.tecnonutri.presentation.presenters.base.AbstractPresenter
 

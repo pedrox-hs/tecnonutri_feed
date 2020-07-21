@@ -6,10 +6,10 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import br.com.pedrosilva.tecnonutri.R
-import br.com.pedrosilva.tecnonutri.data.repositories.ProfileRepositoryImpl
-import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
-import br.com.pedrosilva.tecnonutri.domain.entities.Profile
-import br.com.pedrosilva.tecnonutri.domain.executor.impl.ThreadExecutor
+import com.pedrenrique.tecnonutri.data.repositories.ProfileRepositoryImpl
+import com.pedrenrique.tecnonutri.domain.FeedItem
+import com.pedrenrique.tecnonutri.domain.Profile
+import com.pedrenrique.tecnonutri.domain.executor.impl.ThreadExecutor
 import br.com.pedrosilva.tecnonutri.presentation.navigation.Navigator
 import br.com.pedrosilva.tecnonutri.presentation.presenters.ProfilePresenter
 import br.com.pedrosilva.tecnonutri.presentation.presenters.impl.ProfilePresenterImpl
