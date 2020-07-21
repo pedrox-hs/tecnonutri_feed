@@ -1,5 +1,7 @@
 package br.com.pedrosilva.tecnonutri.presentation.ui
 
+import br.com.pedrosilva.tecnonutri.presentation.presenters.error.ErrorData
+
 /**
  *
  *
@@ -21,7 +23,7 @@ interface BaseView {
     /**
      * This method is used for showing error messages on the UI.
      *
-     * @param message The error message to be displayed.
+     * @param error The error data to be displayed.
      */
-    fun showError(message: String)
+    fun showError(error: ErrorData)
 }

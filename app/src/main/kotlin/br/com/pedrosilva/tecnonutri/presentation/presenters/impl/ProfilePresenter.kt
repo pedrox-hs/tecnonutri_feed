@@ -8,24 +8,24 @@ import com.pedrenrique.tecnonutri.domain.interactors.GetProfileInteractor
 import com.pedrenrique.tecnonutri.domain.interactors.base.Interactor
 import com.pedrenrique.tecnonutri.domain.interactors.impl.GetProfileInteractorImpl
 import com.pedrenrique.tecnonutri.domain.repositories.ProfileRepository
-import br.com.pedrosilva.tecnonutri.presentation.presenters.ProfilePresenter
 import br.com.pedrosilva.tecnonutri.presentation.presenters.base.AbstractPresenter
+import br.com.pedrosilva.tecnonutri.presentation.presenters.ProfileContract
 
-class ProfilePresenterImpl(
+class ProfilePresenter(
+    view: ProfileContract.View,
     executor: Executor,
     mainThread: MainThread,
-    private val view: ProfilePresenter.View,
     private val profileRepository: ProfileRepository,
-    userId: Int
-) : AbstractPresenter(executor, mainThread),
-    ProfilePresenter,
+    private val userId: Int
+) : AbstractPresenter<ProfileContract.View>(view, executor, mainThread),
+    ProfileContract.Presenter,
     GetProfileInteractor.Callback {
 
-    init {
-        load(userId)
+    override fun create() {
+        load()
     }
 
-    override fun load(userId: Int) {
+    private fun load() {
         val interactor: Interactor = GetProfileInteractorImpl(
             executor,
             mainThread,
@@ -36,7 +36,7 @@ class ProfilePresenterImpl(
         interactor.execute()
     }
 
-    override fun loadMore(userId: Int, page: Int, timestamp: Int) {
+    override fun loadMore(page: Int, timestamp: Int) {
         val interactor: Interactor = GetProfileInteractorImpl(
             executor,
             mainThread,
@@ -49,8 +49,8 @@ class ProfilePresenterImpl(
         interactor.execute()
     }
 
-    override fun refresh(userId: Int) {
-        load(userId)
+    override fun refresh() {
+        load()
     }
 
     override fun onProfileRetrieved(
@@ -59,20 +59,10 @@ class ProfilePresenterImpl(
         page: Int,
         timestamp: Int
     ) {
-        view.onLoadProfile(profile, feedItems, page, timestamp)
+        view?.onLoadProfile(profile, feedItems, page, timestamp)
     }
 
     override fun onProfileRetrieveFailed(error: Throwable) {
-        view.onLoadFail(error)
+        view?.onLoadFail(error)
     }
-
-    override fun resume() {}
-
-    override fun pause() {}
-
-    override fun stop() {}
-
-    override fun destroy() {}
-
-    override fun onError(message: String) {}
 }

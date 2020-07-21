@@ -4,23 +4,33 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.R
+import br.com.pedrosilva.tecnonutri.presentation.ui.adapters.FeedListAdapter
+import br.com.pedrosilva.tecnonutri.presentation.ui.HasPresenter
+import br.com.pedrosilva.tecnonutri.presentation.presenters.error.ErrorData
+import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.EndlessRecyclerViewScrollListener
+import br.com.pedrosilva.tecnonutri.presentation.navigation.Navigator
+import br.com.pedrosilva.tecnonutri.presentation.presenters.FeedListContract
+import br.com.pedrosilva.tecnonutri.presentation.presenters.impl.FeedListPresenter
+import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
 import com.pedrenrique.tecnonutri.data.repositories.FeedRepositoryImpl
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.Profile
 import com.pedrenrique.tecnonutri.domain.executor.impl.ThreadExecutor
-import br.com.pedrosilva.tecnonutri.presentation.navigation.Navigator
-import br.com.pedrosilva.tecnonutri.presentation.presenters.FeedPresenter
-import br.com.pedrosilva.tecnonutri.presentation.presenters.impl.FeedPresenterImpl
-import br.com.pedrosilva.tecnonutri.presentation.ui.adapters.FeedAdapter
-import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.EndlessRecyclerViewScrollListener
-import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
 import kotlinx.android.synthetic.main.activity_main.rv_feed
 import kotlinx.android.synthetic.main.activity_main.swipe_refresh
 
-class MainActivity : BaseActivity(), FeedPresenter.View {
+class FeedListActivity : BaseActivity(), FeedListContract.View,
+    HasPresenter {
 
-    private var feedPresenter: FeedPresenter? = null
-    private val feedAdapter by lazy { FeedAdapter() }
+    override val presenter: FeedListContract.FeedPresenter by lazy {
+        FeedListPresenter(
+            this,
+            ThreadExecutor.instance,
+            MainThreadImpl.instance,
+            FeedRepositoryImpl()
+        )
+    }
+    private val feedAdapter by lazy { FeedListAdapter() }
     private val RecyclerView.linearLayoutManager: LinearLayoutManager
         get() = layoutManager as LinearLayoutManager
     private var timestamp = 0
@@ -37,26 +47,20 @@ class MainActivity : BaseActivity(), FeedPresenter.View {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setupRecyclerView()
-        swipe_refresh.setOnRefreshListener { feedPresenter?.refresh() }
-        feedPresenter = FeedPresenterImpl(
-            ThreadExecutor.instance,
-            MainThreadImpl.instance,
-            this,
-            FeedRepositoryImpl()
-        )
+        swipe_refresh.setOnRefreshListener { presenter.refresh() }
     }
 
     private fun setupRecyclerView() {
         feedAdapter.setFeedItemClickListener(::onFeedItemClick)
         feedAdapter.setProfileClickListener(::onProfileClick)
         feedAdapter.setChangeLikeListener { feedHash, liked ->
-            feedPresenter?.changeLike(feedHash, liked)
+            presenter.changeLike(feedHash, liked)
         }
         feedAdapter.setRetryClickListener {
             if (isFirstLoad) {
-                feedPresenter?.load()
+                presenter.load()
             } else {
-                feedPresenter?.loadMore(nextPage, timestamp)
+                presenter.loadMore(nextPage, timestamp)
             }
         }
         rv_feed.apply {
@@ -64,18 +68,17 @@ class MainActivity : BaseActivity(), FeedPresenter.View {
             adapter = feedAdapter
         }
         endlessRecyclerViewScrollListener =
-            EndlessRecyclerViewScrollListener(rv_feed.linearLayoutManager) { _, _ ->
-                feedPresenter?.loadMore(nextPage, timestamp)
+            EndlessRecyclerViewScrollListener(
+                rv_feed.linearLayoutManager
+            ) { _, _ ->
+                presenter.loadMore(nextPage, timestamp)
             }
     }
 
     override fun onResume() {
         super.onResume()
-        feedPresenter?.resume()
         feedAdapter.run {
-            items.map { item ->
-                item.copy(isLiked = feedPresenter!!.isLiked(item.id))
-            }
+            items.map { item -> item.copy(isLiked = presenter.isLiked(item.id)) }
             notifyDataSetChanged()
         }
     }
@@ -105,7 +108,7 @@ class MainActivity : BaseActivity(), FeedPresenter.View {
         swipe_refresh.isRefreshing = false
         val msgError = getString(R.string.fail_to_load_try_again)
         feedAdapter.notifyError(msgError)
-        showError(msgError)
+        presenter.onError(ErrorData(msgError))
     }
 
     override fun onChangeLike(feedHash: String, like: Boolean) {}

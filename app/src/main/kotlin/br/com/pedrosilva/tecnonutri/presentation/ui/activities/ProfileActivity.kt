@@ -6,17 +6,19 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import br.com.pedrosilva.tecnonutri.R
+import br.com.pedrosilva.tecnonutri.presentation.ui.HasPresenter
+import br.com.pedrosilva.tecnonutri.presentation.presenters.error.ErrorData
+import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.EndlessRecyclerViewScrollListener
+import br.com.pedrosilva.tecnonutri.presentation.navigation.Navigator
+import br.com.pedrosilva.tecnonutri.presentation.presenters.ProfileContract
+import br.com.pedrosilva.tecnonutri.presentation.presenters.impl.ProfilePresenter
+import br.com.pedrosilva.tecnonutri.presentation.ui.adapters.ProfileFeedAdapter
+import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
+import com.google.android.material.appbar.AppBarLayout
 import com.pedrenrique.tecnonutri.data.repositories.ProfileRepositoryImpl
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.Profile
 import com.pedrenrique.tecnonutri.domain.executor.impl.ThreadExecutor
-import br.com.pedrosilva.tecnonutri.presentation.navigation.Navigator
-import br.com.pedrosilva.tecnonutri.presentation.presenters.ProfilePresenter
-import br.com.pedrosilva.tecnonutri.presentation.presenters.impl.ProfilePresenterImpl
-import br.com.pedrosilva.tecnonutri.presentation.ui.adapters.FeedUserAdapter
-import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.EndlessRecyclerViewScrollListener
-import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
-import com.google.android.material.appbar.AppBarLayout
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_profile.rv_feed_user
 import kotlinx.android.synthetic.main.activity_profile.swipe_refresh
@@ -28,7 +30,9 @@ import kotlinx.android.synthetic.main.toolbar_profile.tv_general_goal
 import kotlinx.android.synthetic.main.toolbar_profile.tv_profile_name
 import kotlin.math.abs
 
-class ProfileActivity : BaseActivity(), ProfilePresenter.View,
+class ProfileActivity : BaseActivity(),
+    ProfileContract.View,
+    HasPresenter,
     AppBarLayout.OnOffsetChangedListener {
 
     companion object {
@@ -51,9 +55,19 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View,
     private var timestamp = 0
     private var nextPage = 0
 
-    private var profilePresenter: ProfilePresenter? = null
-    private val feedUserAdapter: FeedUserAdapter by lazy {
-        FeedUserAdapter(::onFeedItemClicked)
+    override val presenter: ProfileContract.Presenter by lazy {
+        ProfilePresenter(
+            this,
+            ThreadExecutor.instance,
+            MainThreadImpl.instance,
+            ProfileRepositoryImpl(),
+            userId
+        )
+    }
+    private val profileFeedAdapter: ProfileFeedAdapter by lazy {
+        ProfileFeedAdapter(
+            ::onFeedItemClicked
+        )
     }
     private val gridLayoutManager: GridLayoutManager by lazy {
         GridLayoutManager(this, 3)
@@ -80,37 +94,29 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View,
         setupRecyclerView()
 
         tv_profile_name.text = title
-        swipe_refresh.setOnRefreshListener { profilePresenter?.refresh(userId) }
-
-        profilePresenter = ProfilePresenterImpl(
-            ThreadExecutor.instance,
-            MainThreadImpl.instance,
-            this,
-            ProfileRepositoryImpl(),
-            userId
-        )
+        swipe_refresh.setOnRefreshListener { presenter.refresh() }
     }
 
     private fun setupRecyclerView() {
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int =
-                if (feedUserAdapter.isListEnded || position < (feedUserAdapter.itemCount - 1)) 1
+                if (profileFeedAdapter.isListEnded || position < (profileFeedAdapter.itemCount - 1)) 1
                 else 3
         }
         rv_feed_user.layoutManager = gridLayoutManager
-        rv_feed_user.adapter = feedUserAdapter
+        rv_feed_user.adapter = profileFeedAdapter
 
         endlessRecyclerViewScrollListener =
-            EndlessRecyclerViewScrollListener(gridLayoutManager) { _, _ ->
-                if (isFirstLoad) {
-                    profilePresenter?.load(userId)
-                } else {
-                    profilePresenter?.loadMore(userId, nextPage, timestamp)
+            EndlessRecyclerViewScrollListener(
+                gridLayoutManager
+            ) { _, _ ->
+                if (!isFirstLoad) {
+                    presenter.loadMore(nextPage, timestamp)
                 }
             }
-        feedUserAdapter.setRetryClickListener {
+        profileFeedAdapter.setRetryClickListener {
             endlessRecyclerViewScrollListener.resetState()
-            profilePresenter?.loadMore(userId, nextPage, timestamp)
+            presenter.loadMore(nextPage, timestamp)
         }
     }
 
@@ -152,23 +158,23 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View,
 
             tv_general_goal!!.text = profile.generalGoal
 
-            feedUserAdapter.items = feedItems
+            profileFeedAdapter.items = feedItems
             swipe_refresh.isRefreshing = false
             endlessRecyclerViewScrollListener.resetState()
             rv_feed_user.clearOnScrollListeners()
             rv_feed_user.addOnScrollListener(endlessRecyclerViewScrollListener)
         } else {
-            feedUserAdapter.appendItems(feedItems)
+            profileFeedAdapter.appendItems(feedItems)
         }
         if (feedItems.count() == 0)
-            feedUserAdapter.notifyEndList()
+            profileFeedAdapter.notifyEndList()
     }
 
     override fun onLoadFail(error: Throwable) {
         swipe_refresh.isRefreshing = false
         val msgError = getString(R.string.fail_to_load_try_again)
-        feedUserAdapter.notifyError(msgError)
-        showError(msgError)
+        profileFeedAdapter.notifyError(msgError)
+        presenter.onError(ErrorData(msgError))
     }
 
     private fun onFeedItemClicked(feedItem: FeedItem) {

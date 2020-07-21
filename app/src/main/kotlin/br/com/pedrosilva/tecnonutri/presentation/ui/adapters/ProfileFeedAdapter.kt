@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_feed_user.view.iv_meal
 import kotlinx.android.synthetic.main.item_feed_user.view.pb_loading_image
 
-class FeedUserAdapter(
+class ProfileFeedAdapter(
     private val feedItemClickListener: FeedItemClickListener
 ) : GenericAdapter<FeedItem, RecyclerView.ViewHolder>(true) {
 

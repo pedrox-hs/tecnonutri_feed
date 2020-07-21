@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.item_feed.view.tv_meal_date
 import kotlinx.android.synthetic.main.item_feed.view.tv_profile_general_goal
 import kotlinx.android.synthetic.main.item_feed.view.tv_profile_name
 
-class FeedAdapter : GenericAdapter<FeedItem, RecyclerView.ViewHolder>(true) {
+class FeedListAdapter : GenericAdapter<FeedItem, RecyclerView.ViewHolder>(true) {
 
     private var feedItemClickListener: FeedItemClickListener? = null
     private var profileClickListener: ProfileClickListener? = null

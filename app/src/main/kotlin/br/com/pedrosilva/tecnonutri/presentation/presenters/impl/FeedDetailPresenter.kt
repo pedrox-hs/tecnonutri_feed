@@ -1,5 +1,7 @@
 package br.com.pedrosilva.tecnonutri.presentation.presenters.impl
 
+import br.com.pedrosilva.tecnonutri.presentation.presenters.FeedDetailContract
+import br.com.pedrosilva.tecnonutri.presentation.presenters.base.AbstractPresenter
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.executor.Executor
 import com.pedrenrique.tecnonutri.domain.executor.MainThread
@@ -9,26 +11,20 @@ import com.pedrenrique.tecnonutri.domain.interactors.base.Interactor
 import com.pedrenrique.tecnonutri.domain.interactors.impl.ChangeLikeInteractorImpl
 import com.pedrenrique.tecnonutri.domain.interactors.impl.GetFeedItemInteractorImpl
 import com.pedrenrique.tecnonutri.domain.repositories.FeedRepository
-import br.com.pedrosilva.tecnonutri.presentation.presenters.FeedItemPresenter
-import br.com.pedrosilva.tecnonutri.presentation.presenters.base.AbstractPresenter
 
-class FeedItemPresenterImpl(
+class FeedDetailPresenter(
+    view: FeedDetailContract.View,
     executor: Executor,
     mainThread: MainThread,
-    private val view: FeedItemPresenter.View,
     private val feedRepository: FeedRepository,
     private val feedHash: String
-) : AbstractPresenter(executor, mainThread),
-    FeedItemPresenter,
+) : AbstractPresenter<FeedDetailContract.View>(view, executor, mainThread),
+    FeedDetailContract.Presenter,
     GetFeedItemInteractor.Callback,
     ChangeLikeInteractor.Callback {
 
-    init {
-        load()
-    }
-
-    fun load() {
-        //view.showProgress();
+    private fun load() {
+        //view?.showProgress();
         val interactor: Interactor = GetFeedItemInteractorImpl(
             executor,
             mainThread,
@@ -39,23 +35,17 @@ class FeedItemPresenterImpl(
         interactor.execute()
     }
 
-    override fun resume() {}
-
-    override fun pause() {}
-
-    override fun stop() {}
-
-    override fun destroy() {}
-
-    override fun onError(message: String) {}
+    override fun create() {
+        load()
+    }
 
     override fun onFeedItemRetrieved(feedItem: FeedItem) {
-        view.hideProgress()
-        view.onLoadFeedItem(feedItem)
+        view?.hideProgress()
+        view?.onLoadFeedItem(feedItem)
     }
 
     override fun onFeedItemRetrieveFailed(error: Throwable) {
-        view.onLoadFail(error)
+        view?.onLoadFail(error)
     }
 
     override fun reload() {
@@ -74,11 +64,10 @@ class FeedItemPresenterImpl(
         interactor.execute()
     }
 
-    override fun isLiked(feedHash: String): Boolean {
-        return feedRepository.isLiked(feedHash)
-    }
+    override fun isLiked(feedHash: String): Boolean =
+        feedRepository.isLiked(feedHash)
 
     override fun onChange(feedHash: String, liked: Boolean) {
-        view.onChangeLike(feedHash, liked)
+        view?.onChangeLike(feedHash, liked)
     }
 }

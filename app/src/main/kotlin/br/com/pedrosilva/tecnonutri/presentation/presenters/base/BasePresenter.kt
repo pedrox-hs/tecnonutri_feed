@@ -1,6 +1,17 @@
 package br.com.pedrosilva.tecnonutri.presentation.presenters.base
 
-interface BasePresenter {
+import br.com.pedrosilva.tecnonutri.presentation.presenters.error.ErrorData
+
+interface BasePresenter<View> {
+
+    var view: View?
+
+    /**
+     * Method that control the lifecycle of the view. It should be called in the view's
+     * Activity::onPostCreate or Fragment::onViewCreated() method.
+     */
+    fun create()
+
     /**
      * Method that control the lifecycle of the view. It should be called in the view's
      * (Activity or Fragment) onResume() method.
@@ -28,5 +39,5 @@ interface BasePresenter {
     /**
      * Method that should signal the appropriate view to show the appropriate error with the provided message.
      */
-    fun onError(message: String)
+    fun onError(error: ErrorData)
 }

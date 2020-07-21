@@ -6,18 +6,20 @@ import android.os.Bundle
 import android.view.View
 import android.widget.CheckBox
 import br.com.pedrosilva.tecnonutri.R
+import br.com.pedrosilva.tecnonutri.presentation.presenters.FeedDetailContract
+import br.com.pedrosilva.tecnonutri.presentation.presenters.impl.FeedDetailPresenter
+import br.com.pedrosilva.tecnonutri.presentation.ui.adapters.FoodAdapter
+import br.com.pedrosilva.tecnonutri.presentation.ui.HasPresenter
+import br.com.pedrosilva.tecnonutri.presentation.presenters.error.ErrorData
+import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.setSingleOnClickListener
+import br.com.pedrosilva.tecnonutri.presentation.ui.components.CircleTransformation
+import br.com.pedrosilva.tecnonutri.presentation.navigation.Navigator
+import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
+import br.com.pedrosilva.tecnonutri.util.AppUtil
 import com.pedrenrique.tecnonutri.data.repositories.FeedRepositoryImpl
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.Profile
 import com.pedrenrique.tecnonutri.domain.executor.impl.ThreadExecutor
-import br.com.pedrosilva.tecnonutri.presentation.navigation.Navigator
-import br.com.pedrosilva.tecnonutri.presentation.presenters.FeedItemPresenter
-import br.com.pedrosilva.tecnonutri.presentation.presenters.impl.FeedItemPresenterImpl
-import br.com.pedrosilva.tecnonutri.presentation.ui.adapters.FoodAdapter
-import br.com.pedrosilva.tecnonutri.presentation.ui.components.CircleTransformation
-import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.setSingleOnClickListener
-import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
-import br.com.pedrosilva.tecnonutri.util.AppUtil
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_post_details.cb_like
@@ -31,7 +33,9 @@ import kotlinx.android.synthetic.main.activity_post_details.tv_profile_general_g
 import kotlinx.android.synthetic.main.activity_post_details.tv_profile_name
 import java.util.Date
 
-class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
+class FeedDetailActivity : BaseActivity(),
+    FeedDetailContract.View,
+    HasPresenter {
 
     companion object {
 
@@ -39,7 +43,7 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
         private const val EXTRA_FEED_ITEM_DATE = "EXTRA_FEED_ITEM_DATE"
 
         fun getCallingIntent(context: Context, feedHash: String, date: Date): Intent {
-            val intent = Intent(context, PostDetailsActivity::class.java)
+            val intent = Intent(context, FeedDetailActivity::class.java)
             intent.putExtra(EXTRA_FEED_ITEM_HASH, feedHash)
             intent.putExtra(EXTRA_FEED_ITEM_DATE, date)
             return intent
@@ -52,11 +56,19 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
     private val itemDate: Date by lazy {
         intent.getSerializableExtra(EXTRA_FEED_ITEM_DATE) as? Date ?: Date()
     }
-    private var feedItem: FeedItem? = null
-    private val profile: Profile?
-        get() = feedItem?.profile
 
-    private var feedItemPresenter: FeedItemPresenterImpl? = null
+    private var feedItem: FeedItem? = null
+    private val profile: Profile? get() = feedItem?.profile
+
+    override val presenter: FeedDetailContract.Presenter by lazy {
+        FeedDetailPresenter(
+            this,
+            ThreadExecutor.instance,
+            MainThreadImpl.instance,
+            FeedRepositoryImpl(),
+            feedHash
+        )
+    }
     private val foodAdapter: FoodAdapter by lazy { FoodAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +88,7 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
 
     override fun onResume() {
         super.onResume()
-        cb_like.isChecked = feedItemPresenter?.isLiked(feedHash) ?: false
+        cb_like.isChecked = presenter.isLiked(feedHash)
     }
 
     private fun init() {
@@ -92,19 +104,11 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
             }
         }
 
-        swipe_refresh.setOnRefreshListener { feedItemPresenter?.reload() }
+        swipe_refresh.setOnRefreshListener { presenter.reload() }
 
         cb_like.setOnClickListener { view ->
-            feedItemPresenter?.changeLike(feedHash, (view as CheckBox).isChecked)
+            presenter.changeLike(feedHash, (view as CheckBox).isChecked)
         }
-
-        feedItemPresenter = FeedItemPresenterImpl(
-            ThreadExecutor.instance,
-            MainThreadImpl.instance,
-            this,
-            FeedRepositoryImpl(),
-            feedHash
-        )
     }
 
     override fun onLoadFeedItem(item: FeedItem) {
@@ -142,7 +146,7 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
 
     override fun onLoadFail(error: Throwable) {
         swipe_refresh.isRefreshing = false
-        showError(getString(R.string.fail_to_load_try_again))
+        presenter.onError(ErrorData(getString(R.string.fail_to_load_try_again)))
     }
 
     private fun setupRecyclerView() {
@@ -153,6 +157,6 @@ class PostDetailsActivity : BaseActivity(), FeedItemPresenter.View {
     }
 
     override fun reloadAll() {
-        feedItemPresenter?.load()
+        presenter.reload()
     }
 }

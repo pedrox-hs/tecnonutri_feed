@@ -1,22 +1,55 @@
 package br.com.pedrosilva.tecnonutri.presentation.ui.activities
 
+import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import br.com.pedrosilva.tecnonutri.R
-import br.com.pedrosilva.tecnonutri.presentation.ui.BaseView
+import br.com.pedrosilva.tecnonutri.presentation.ui.HasPresenter
+import br.com.pedrosilva.tecnonutri.presentation.presenters.base.BasePresenter
+import br.com.pedrosilva.tecnonutri.presentation.presenters.error.ErrorData
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.setSingleOnClickListener
+import br.com.pedrosilva.tecnonutri.presentation.ui.BaseView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.progress.ll_error
 import kotlinx.android.synthetic.main.progress.progress_bar
 import kotlinx.android.synthetic.main.progress.tv_error_message
 
-abstract class BaseActivity : AppCompatActivity(), BaseView {
+abstract class BaseActivity : AppCompatActivity(),
+    BaseView {
+
+    private val presenter: BasePresenter<*>?
+        get() = (this as? HasPresenter)?.presenter
 
     private var hasProgress = false
 
     private val contentView by lazy {
         findViewById<View>(android.R.id.content)
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        presenter?.create()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter?.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        presenter?.pause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        presenter?.stop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter?.destroy()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
@@ -28,10 +61,10 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
             else -> super.onOptionsItemSelected(item)
         }
 
-    override fun showError(message: String) {
-        Snackbar.make(contentView, message, Snackbar.LENGTH_LONG).show()
+    override fun showError(error: ErrorData) {
+        Snackbar.make(contentView, error.message, Snackbar.LENGTH_LONG).show()
         if (hasProgress) {
-            tv_error_message.text = message
+            tv_error_message.text = error.message
             ll_error.visibility = View.VISIBLE
             progress_bar.visibility = View.GONE
         }
