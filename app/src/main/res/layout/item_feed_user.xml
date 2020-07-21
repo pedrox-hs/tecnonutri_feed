@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:foreground="?attr/selectableItemBackground">
 
-    <br.com.pedrosilva.tecnonutri.presentation.ui.components.SquareRelativeLayout
+    <br.com.pedrosilva.tecnonutri.features.common.widget.SquareRelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="2dp">
@@ -25,6 +25,6 @@
             android:indeterminate="true"
             android:visibility="gone" />
 
-    </br.com.pedrosilva.tecnonutri.presentation.ui.components.SquareRelativeLayout>
+    </br.com.pedrosilva.tecnonutri.features.common.widget.SquareRelativeLayout>
 
 </FrameLayout>
