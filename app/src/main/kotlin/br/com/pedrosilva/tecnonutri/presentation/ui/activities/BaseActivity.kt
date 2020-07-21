@@ -1,12 +1,12 @@
 package br.com.pedrosilva.tecnonutri.presentation.ui.activities
 
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import br.com.pedrosilva.tecnonutri.R
 import br.com.pedrosilva.tecnonutri.presentation.ui.BaseView
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.setSingleOnClickListener
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.progress.ll_error
 import kotlinx.android.synthetic.main.progress.progress_bar
 import kotlinx.android.synthetic.main.progress.tv_error_message

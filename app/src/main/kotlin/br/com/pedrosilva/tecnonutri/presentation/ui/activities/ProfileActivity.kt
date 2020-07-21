@@ -3,10 +3,8 @@ package br.com.pedrosilva.tecnonutri.presentation.ui.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.v4.content.ContextCompat.getColor
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import br.com.pedrosilva.tecnonutri.R
 import br.com.pedrosilva.tecnonutri.data.repositories.ProfileRepositoryImpl
 import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
@@ -18,6 +16,7 @@ import br.com.pedrosilva.tecnonutri.presentation.presenters.impl.ProfilePresente
 import br.com.pedrosilva.tecnonutri.presentation.ui.adapters.FeedUserAdapter
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.EndlessRecyclerViewScrollListener
 import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
+import com.google.android.material.appbar.AppBarLayout
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_profile.rv_feed_user
 import kotlinx.android.synthetic.main.activity_profile.swipe_refresh
@@ -102,7 +101,7 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View,
         rv_feed_user.adapter = feedUserAdapter
 
         endlessRecyclerViewScrollListener =
-            EndlessRecyclerViewScrollListener(gridLayoutManager) { _: Int, _: RecyclerView ->
+            EndlessRecyclerViewScrollListener(gridLayoutManager) { _, _ ->
                 if (isFirstLoad) {
                     profilePresenter?.load(userId)
                 } else {
@@ -124,7 +123,9 @@ class ProfileActivity : BaseActivity(), ProfilePresenter.View,
 
         collapsing_toolbar.title = title
         collapsing_toolbar.isTitleEnabled = false
-        collapsing_toolbar.setExpandedTitleColor(getColor(this, android.R.color.transparent))
+        collapsing_toolbar.setExpandedTitleColor(
+            ContextCompat.getColor(this, android.R.color.transparent)
+        )
     }
 
     override fun onLoadProfile(

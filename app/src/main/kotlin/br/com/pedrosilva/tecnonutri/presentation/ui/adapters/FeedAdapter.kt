@@ -1,9 +1,9 @@
 package br.com.pedrosilva.tecnonutri.presentation.ui.adapters
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.R
 import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
 import br.com.pedrosilva.tecnonutri.domain.entities.Profile

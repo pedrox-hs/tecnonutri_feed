@@ -1,16 +1,13 @@
 package br.com.pedrosilva.tecnonutri.presentation.ui.adapters
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.ImageView
-import android.widget.ProgressBar
+import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.R
 import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.FeedItemClickListener
-import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.SingleOnClickListener
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.setSingleOnClickListener
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -46,7 +43,6 @@ class FeedUserAdapter(
         view: View,
         private val feedItemClickListener: FeedItemClickListener
     ) : RecyclerView.ViewHolder(view) {
-
 
         fun setup(feedItem: FeedItem) = itemView.run {
             pb_loading_image.visibility = View.VISIBLE

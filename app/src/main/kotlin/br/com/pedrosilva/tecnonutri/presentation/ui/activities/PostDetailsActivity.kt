@@ -3,7 +3,6 @@ package br.com.pedrosilva.tecnonutri.presentation.ui.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.CheckBox
 import br.com.pedrosilva.tecnonutri.R

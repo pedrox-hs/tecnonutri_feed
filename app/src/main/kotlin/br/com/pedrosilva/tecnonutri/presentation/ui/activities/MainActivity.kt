@@ -1,7 +1,8 @@
 package br.com.pedrosilva.tecnonutri.presentation.ui.activities
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.R
 import br.com.pedrosilva.tecnonutri.data.repositories.FeedRepositoryImpl
 import br.com.pedrosilva.tecnonutri.domain.entities.FeedItem
@@ -20,9 +21,8 @@ class MainActivity : BaseActivity(), FeedPresenter.View {
 
     private var feedPresenter: FeedPresenter? = null
     private val feedAdapter by lazy { FeedAdapter() }
-    private val linearLayoutManager: LinearLayoutManager by lazy {
-        LinearLayoutManager(this)
-    }
+    private val RecyclerView.linearLayoutManager: LinearLayoutManager
+        get() = layoutManager as LinearLayoutManager
     private var timestamp = 0
     private var nextPage = 0
     private var isFirstLoad = true
@@ -60,12 +60,11 @@ class MainActivity : BaseActivity(), FeedPresenter.View {
             }
         }
         rv_feed.apply {
-            layoutManager = linearLayoutManager
             setHasFixedSize(true)
             adapter = feedAdapter
         }
         endlessRecyclerViewScrollListener =
-            EndlessRecyclerViewScrollListener(linearLayoutManager) { _, _ ->
+            EndlessRecyclerViewScrollListener(rv_feed.linearLayoutManager) { _, _ ->
                 feedPresenter?.loadMore(nextPage, timestamp)
             }
     }

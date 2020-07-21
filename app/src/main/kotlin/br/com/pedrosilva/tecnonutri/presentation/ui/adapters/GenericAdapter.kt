@@ -1,11 +1,9 @@
 package br.com.pedrosilva.tecnonutri.presentation.ui.adapters
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.TextView
-import br.com.pedrosilva.tecnonutri.R
+import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.presentation.ui.listeners.setSingleOnClickListener
 import kotlinx.android.synthetic.main.progress.view.ll_error
 import kotlinx.android.synthetic.main.progress.view.progress_bar
