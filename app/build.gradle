@@ -1,17 +1,9 @@
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
-    }
-}
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 //apply from: "${project.rootDir}/QA/quality.gradle"
 
 android {
@@ -75,20 +67,11 @@ dependencies {
     // network
     implementation 'com.squareup.picasso:picasso:2.71828'
 
-    // fabric
-    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
-        transitive = true
-    }
-    implementation('com.crashlytics.sdk.android:answers:1.4.7@aar') {
-        transitive = true
-    }
+    implementation platform('com.google.firebase:firebase-bom:27.0.0')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     // tests
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:2.27.0'
-}
-
-repositories {
-    mavenCentral()
-    maven { url 'https://maven.fabric.io/public' }
 }
