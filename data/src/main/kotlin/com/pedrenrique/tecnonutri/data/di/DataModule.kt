@@ -7,7 +7,7 @@ import com.pedrenrique.tecnonutri.domain.repositories.ProfileRepository
 import dagger.Binds
 import dagger.Module
 
-@Module
+@Module(includes = [StorageModule::class])
 interface DataModule {
 
     @Binds

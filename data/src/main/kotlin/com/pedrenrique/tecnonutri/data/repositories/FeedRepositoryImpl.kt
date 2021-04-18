@@ -1,6 +1,7 @@
 package com.pedrenrique.tecnonutri.data.repositories
 
 import com.pedrenrique.tecnonutri.data.converters.asDTO
+import com.pedrenrique.tecnonutri.data.datasource.RealmManager
 import com.pedrenrique.tecnonutri.data.entities.FeedResponse
 import com.pedrenrique.tecnonutri.data.entities.LikedFeedItem
 import com.pedrenrique.tecnonutri.data.ext.getBodyOrThrow
@@ -10,11 +11,12 @@ import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.repositories.FeedRepository
 import com.pedrenrique.tecnonutri.domain.repositories.FeedRepository.FeedCallback
 import com.pedrenrique.tecnonutri.domain.repositories.FeedRepository.FeedItemCallback
-import io.realm.Realm
 import retrofit2.Call
 import javax.inject.Inject
 
-class FeedRepositoryImpl @Inject constructor() : FeedRepository {
+class FeedRepositoryImpl @Inject constructor(
+    private val manager: RealmManager
+) : FeedRepository {
 
     private val apiService by lazy {
         ApiServiceGenerator.getService<FeedService>()
@@ -50,27 +52,23 @@ class FeedRepositoryImpl @Inject constructor() : FeedRepository {
     }
 
     override fun likeItem(feedHash: String) {
-        Realm.getDefaultInstance().use {
-            it.executeTransactionAsync { realm ->
-                realm.copyToRealmOrUpdate(LikedFeedItem(feedHash))
-            }
+        manager.transactionAsync {
+            copyToRealmOrUpdate(LikedFeedItem(feedHash))
         }
     }
 
     override fun dislikeItem(feedHash: String) {
-        Realm.getDefaultInstance().use {
-            it.executeTransactionAsync { realm ->
-                realm.where(LikedFeedItem::class.java)
-                    .equalTo("feedHash", feedHash)
-                    .findAll()
-                    .deleteAllFromRealm()
-            }
+        manager.transactionAsync {
+            where(LikedFeedItem::class.java)
+                .equalTo("feedHash", feedHash)
+                .findAll()
+                .deleteAllFromRealm()
         }
     }
 
     private fun isLiked(feedHash: String) =
-        Realm.getDefaultInstance().use { realm ->
-            val likedFeedItem = realm.where(LikedFeedItem::class.java)
+        manager.execute {
+            val likedFeedItem = where(LikedFeedItem::class.java)
                 .equalTo("feedHash", feedHash)
                 .findFirst()
             likedFeedItem != null
@@ -79,11 +77,11 @@ class FeedRepositoryImpl @Inject constructor() : FeedRepository {
     private fun checkLikedFeeds(items: List<FeedItem>): List<FeedItem> {
         if (items.isEmpty()) return items
         val feedHashes = items.map { it.id }.toTypedArray()
-        return Realm.getDefaultInstance().use { realm ->
-            val likedFeedItems = realm.where(LikedFeedItem::class.java)
+        return manager.execute {
+            val likedFeedItems = where(LikedFeedItem::class.java)
                 .`in`("feedHash", feedHashes)
                 .findAll()
-                .let { results -> realm.copyFromRealm(results).map { it.feedHash } }
+                .let { results -> copyFromRealm(results).map { it.feedHash } }
 
             items.map { it.copy(isLiked = likedFeedItems.contains(it.id)) }
         }
