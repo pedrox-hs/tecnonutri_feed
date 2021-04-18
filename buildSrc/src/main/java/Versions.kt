@@ -1,6 +1,7 @@
 object Versions {
     const val gradle = "4.1.3"
     const val kotlin = "1.4.32"
+    const val leakCanary = "2.7"
     const val googleServices = "4.3.5"
     const val firebaseCrashlytics = "2.5.2"
     const val realm = "6.0.2"

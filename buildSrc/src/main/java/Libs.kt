@@ -1,5 +1,6 @@
 object Libs {
     const val kotlin = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}"
+    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakCanary}"
     const val inject = "javax.inject:javax.inject:1"
 
     const val dagger = "com.google.dagger:dagger:${Versions.dagger}"
