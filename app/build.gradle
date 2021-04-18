@@ -4,6 +4,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'dagger.hilt.android.plugin'
 //apply from: "${project.rootDir}/QA/quality.gradle"
 
 android {
@@ -49,11 +50,16 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    // Local
     implementation project(Modules.domain)
     implementation project(Modules.data)
 
     // general
     implementation Libs.kotlin
+
+    // DI
+    implementation AndroidLibs.hilt
+    kapt AndroidLibs.hiltCompiler
 
     // android support
     implementation AndroidLibs.appCompat
@@ -66,6 +72,7 @@ dependencies {
     implementation AndroidLibs.circleImageView
     implementation AndroidLibs.picasso
 
+    // Firebase
     implementation platform(AndroidLibs.firebaseBoom)
     implementation AndroidLibs.firebaseCrashlytics
     implementation AndroidLibs.firebaseAnalytics

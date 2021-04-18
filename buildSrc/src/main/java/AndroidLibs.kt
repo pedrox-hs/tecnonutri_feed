@@ -12,4 +12,7 @@ object AndroidLibs {
     const val firebaseBoom = "com.google.firebase:firebase-bom:${Versions.firebase}"
     const val firebaseCrashlytics = "com.google.firebase:firebase-crashlytics-ktx"
     const val firebaseAnalytics = "com.google.firebase:firebase-analytics-ktx"
+
+    const val hilt = "com.google.dagger:hilt-android:${Versions.hilt}"
+    const val hiltCompiler = "com.google.dagger:hilt-compiler:${Versions.hilt}"
 }

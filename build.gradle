@@ -12,6 +12,7 @@ buildscript {
         classpath Plugins.googleServices
         classpath Plugins.firebaseCrashlytics
         classpath Plugins.realm
+        classpath Plugins.hilt
     }
 }
 
