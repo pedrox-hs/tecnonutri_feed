@@ -49,29 +49,28 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation project(':domain')
-    implementation project(':data')
+    implementation project(Modules.domain)
+    implementation project(Modules.data)
 
     // general
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation 'de.hdodenhof:circleimageview:2.1.0'
+    implementation Libs.kotlin
 
     // android support
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.gridlayout:gridlayout:1.0.0'
-    implementation 'androidx.percentlayout:percentlayout:1.0.0'
+    implementation AndroidLibs.appCompat
+    implementation AndroidLibs.material
+    implementation AndroidLibs.cardView
+    implementation AndroidLibs.recyclerView
+    implementation AndroidLibs.gridLayout
+    implementation AndroidLibs.percentLayout
 
-    // network
-    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation AndroidLibs.circleImageView
+    implementation AndroidLibs.picasso
 
-    implementation platform('com.google.firebase:firebase-bom:27.0.0')
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation platform(AndroidLibs.firebaseBoom)
+    implementation AndroidLibs.firebaseCrashlytics
+    implementation AndroidLibs.firebaseAnalytics
 
     // tests
-    testImplementation 'junit:junit:4.13'
-    testImplementation 'org.mockito:mockito-core:2.27.0'
+    testImplementation TestLibs.junit
+    testImplementation TestLibs.mockito
 }
