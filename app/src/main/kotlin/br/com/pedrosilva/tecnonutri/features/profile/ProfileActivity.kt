@@ -6,18 +6,16 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import br.com.pedrosilva.tecnonutri.R
-import br.com.pedrosilva.tecnonutri.features.common.view.HasPresenter
+import br.com.pedrosilva.tecnonutri.features.common.Navigator
 import br.com.pedrosilva.tecnonutri.features.common.error.ErrorData
 import br.com.pedrosilva.tecnonutri.features.common.listener.EndlessRecyclerViewScrollListener
-import br.com.pedrosilva.tecnonutri.features.common.Navigator
 import br.com.pedrosilva.tecnonutri.features.common.view.BaseActivity
-import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
+import br.com.pedrosilva.tecnonutri.features.common.view.HasPresenter
 import com.google.android.material.appbar.AppBarLayout
-import com.pedrenrique.tecnonutri.data.repositories.ProfileRepositoryImpl
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.Profile
-import com.pedrenrique.tecnonutri.domain.executor.impl.ThreadExecutor
 import com.squareup.picasso.Picasso
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_profile.rv_feed_user
 import kotlinx.android.synthetic.main.activity_profile.swipe_refresh
 import kotlinx.android.synthetic.main.toolbar_profile.appbar
@@ -26,8 +24,10 @@ import kotlinx.android.synthetic.main.toolbar_profile.iv_profile_image
 import kotlinx.android.synthetic.main.toolbar_profile.toolbar
 import kotlinx.android.synthetic.main.toolbar_profile.tv_general_goal
 import kotlinx.android.synthetic.main.toolbar_profile.tv_profile_name
+import javax.inject.Inject
 import kotlin.math.abs
 
+@AndroidEntryPoint
 class ProfileActivity : BaseActivity(),
     ProfileContract.View,
     HasPresenter,
@@ -48,20 +48,14 @@ class ProfileActivity : BaseActivity(),
         }
     }
 
-    private val userId by lazy { intent.getIntExtra(EXTRA_PROFILE_ID, 0) }
+    @Inject
+    override lateinit var presenter: ProfileContract.Presenter
+
+    override val profileUserId by lazy { intent.getIntExtra(EXTRA_PROFILE_ID, 0) }
     private val title by lazy { intent.getStringExtra(EXTRA_PROFILE_NAME) ?: "" }
     private var timestamp = 0
     private var nextPage = 0
 
-    override val presenter: ProfileContract.Presenter by lazy {
-        ProfilePresenter(
-            this,
-            ThreadExecutor.instance,
-            MainThreadImpl.instance,
-            ProfileRepositoryImpl(),
-            userId
-        )
-    }
     private val profileFeedAdapter: ProfileFeedAdapter by lazy {
         ProfileFeedAdapter(
             ::onFeedItemClicked

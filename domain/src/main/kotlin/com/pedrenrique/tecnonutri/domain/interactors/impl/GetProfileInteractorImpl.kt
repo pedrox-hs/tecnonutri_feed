@@ -5,37 +5,39 @@ import com.pedrenrique.tecnonutri.domain.Profile
 import com.pedrenrique.tecnonutri.domain.executor.Executor
 import com.pedrenrique.tecnonutri.domain.executor.MainThread
 import com.pedrenrique.tecnonutri.domain.interactors.GetProfileInteractor
+import com.pedrenrique.tecnonutri.domain.interactors.GetProfileInteractor.Callback
+import com.pedrenrique.tecnonutri.domain.interactors.GetProfileInteractor.Params
 import com.pedrenrique.tecnonutri.domain.interactors.base.AbstractInteractor
 import com.pedrenrique.tecnonutri.domain.repositories.ProfileRepository
 import com.pedrenrique.tecnonutri.domain.repositories.ProfileRepository.ProfileCallback
+import javax.inject.Inject
 
-class GetProfileInteractorImpl @JvmOverloads constructor(
+class GetProfileInteractorImpl @Inject constructor(
     threadExecutor: Executor,
     mainThread: MainThread,
-    private val profileRepository: ProfileRepository,
-    private val userId: Int,
-    private val callback: GetProfileInteractor.Callback,
-    private var page: Int? = null,
-    private var timestamp: Int? = null
-) : AbstractInteractor(threadExecutor, mainThread), GetProfileInteractor {
+    private val profileRepository: ProfileRepository
+) : AbstractInteractor<Params, Callback>(threadExecutor, mainThread), GetProfileInteractor {
 
-    override fun run() {
-        if (page == null) {
-            firstList(userId)
+    override fun run(params: Params, callback: GetProfileInteractor.Callback) {
+        if (params.page == 0) {
+            firstList(params, callback)
         } else {
-            loadMore(userId, page!!, timestamp!!)
+            loadMore(params, callback)
         }
     }
 
-    private fun firstList(userId: Int) {
-        profileRepository.get(userId, Callback())
+    private fun firstList(params: Params, callback: GetProfileInteractor.Callback) {
+        profileRepository.get(params.userId, Callback(mainThread, callback))
     }
 
-    private fun loadMore(userId: Int, page: Int, timestamp: Int) {
-        profileRepository.loadMorePosts(userId, page, timestamp, Callback())
+    private fun loadMore(params: Params, callback: GetProfileInteractor.Callback) = params.run {
+        profileRepository.loadMorePosts(userId, page, timestamp, Callback(mainThread, callback))
     }
 
-    private inner class Callback : ProfileCallback {
+    private class Callback(
+        private val mainThread: MainThread,
+        private val callback: GetProfileInteractor.Callback
+    ) : ProfileCallback {
         override fun onSuccess(
             profile: Profile,
             feedItems: List<FeedItem>,

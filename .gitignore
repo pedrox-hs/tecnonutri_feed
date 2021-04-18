@@ -105,3 +105,4 @@ atlassian-ide-plugin.xml
 # End of https://www.toptal.com/developers/gitignore/api/androidstudio
 
 google-services.json
+java_pid*.hprof

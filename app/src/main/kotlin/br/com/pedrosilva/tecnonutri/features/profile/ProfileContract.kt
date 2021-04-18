@@ -15,8 +15,10 @@ interface ProfileContract {
         fun refresh()
     }
 
-    interface View :
-        BaseView {
+    interface View : BaseView {
+
+        val profileUserId: Int
+
         fun onLoadProfile(
             profile: Profile,
             feedItems: List<FeedItem>,

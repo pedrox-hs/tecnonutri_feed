@@ -6,13 +6,16 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * This singleton class will make sure that each interactor operation gets a background thread.
  *
  *
  */
-class ThreadExecutor private constructor() : Executor {
+@Singleton
+class ThreadExecutor @Inject constructor() : Executor {
 
     private val mThreadPoolExecutor = ThreadPoolExecutor(
         CORE_POOL_SIZE,
@@ -22,11 +25,15 @@ class ThreadExecutor private constructor() : Executor {
         WORK_QUEUE
     )
 
-    override fun execute(interactor: AbstractInteractor) {
+    override fun <Params, Callback> execute(
+        interactor: AbstractInteractor<Params, Callback>,
+        params: Params,
+        callback: Callback
+    ) {
         mThreadPoolExecutor.submit {
             // run the main logic
 //                Looper.prepare();
-            interactor.run()
+            interactor.run(params, callback)
 
             // mark it as finished
             interactor.onFinished()
@@ -35,25 +42,10 @@ class ThreadExecutor private constructor() : Executor {
     }
 
     companion object {
-        // This is a singleton
-        @Volatile
-        private var sThreadExecutor: ThreadExecutor? = null
         private const val CORE_POOL_SIZE = 3
         private const val MAX_POOL_SIZE = 5
         private const val KEEP_ALIVE_TIME = 120L
         private val TIME_UNIT = TimeUnit.SECONDS
         private val WORK_QUEUE: BlockingQueue<Runnable> = LinkedBlockingQueue()
-
-        /**
-         * Returns a singleton instance of this executor. If the executor is not initialized then it initializes it and returns
-         * the instance.
-         */
-        val instance: Executor
-            get() {
-                if (sThreadExecutor == null) {
-                    sThreadExecutor = ThreadExecutor()
-                }
-                return sThreadExecutor!!
-            }
     }
 }

@@ -12,8 +12,9 @@ import com.pedrenrique.tecnonutri.domain.repositories.FeedRepository.FeedCallbac
 import com.pedrenrique.tecnonutri.domain.repositories.FeedRepository.FeedItemCallback
 import io.realm.Realm
 import retrofit2.Call
+import javax.inject.Inject
 
-class FeedRepositoryImpl : FeedRepository {
+class FeedRepositoryImpl @Inject constructor() : FeedRepository {
 
     private val apiService by lazy {
         ApiServiceGenerator.getService<FeedService>()
@@ -67,7 +68,7 @@ class FeedRepositoryImpl : FeedRepository {
         }
     }
 
-    override fun isLiked(feedHash: String) =
+    private fun isLiked(feedHash: String) =
         Realm.getDefaultInstance().use { realm ->
             val likedFeedItem = realm.where(LikedFeedItem::class.java)
                 .equalTo("feedHash", feedHash)

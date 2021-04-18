@@ -3,7 +3,12 @@ package com.pedrenrique.tecnonutri.domain.interactors
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.interactors.base.Interactor
 
-interface GetFeedInteractor : Interactor {
+interface GetFeedInteractor : Interactor<GetFeedInteractor.Params, GetFeedInteractor.Callback> {
+
+    class Params(
+        val page: Int = 0,
+        val timestamp: Int = 0
+    )
 
     interface Callback {
 

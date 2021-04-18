@@ -14,5 +14,9 @@ interface Executor {
      *
      * @param interactor The interactor to run.
      */
-    fun execute(interactor: AbstractInteractor)
+    fun <Params, Callback> execute(
+        interactor: AbstractInteractor<Params, Callback>,
+        params: Params,
+        callback: Callback
+    )
 }

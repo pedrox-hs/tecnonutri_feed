@@ -42,6 +42,9 @@ dependencies {
 
     implementation Libs.kotlin
 
+    implementation Libs.dagger
+    kapt Libs.daggerCompiler
+
     // network
     implementation Libs.retrofit
     implementation Libs.okHttpLogging

@@ -7,33 +7,39 @@ import com.pedrenrique.tecnonutri.domain.interactors.GetFeedInteractor
 import com.pedrenrique.tecnonutri.domain.interactors.base.AbstractInteractor
 import com.pedrenrique.tecnonutri.domain.repositories.FeedRepository
 import com.pedrenrique.tecnonutri.domain.repositories.FeedRepository.FeedCallback
+import javax.inject.Inject
 
-class GetFeedInteractorImpl @JvmOverloads constructor(
+class GetFeedInteractorImpl @Inject constructor(
     threadExecutor: Executor,
     mainThread: MainThread,
     private val feedRepository: FeedRepository,
-    private val callback: GetFeedInteractor.Callback,
-    private var page: Int? = null,
-    private var timestamp: Int? = null
-) : AbstractInteractor(threadExecutor, mainThread), GetFeedInteractor {
+) : AbstractInteractor<GetFeedInteractor.Params, GetFeedInteractor.Callback>(
+    threadExecutor,
+    mainThread
+), GetFeedInteractor {
 
-    override fun run() {
-        if (page == null || timestamp == null) {
-            firstList()
-        } else {
-            loadMore(page!!, timestamp!!)
+    override fun run(params: GetFeedInteractor.Params, callback: GetFeedInteractor.Callback) =
+        params.run {
+            if (page == 0 || timestamp == 0) {
+                firstList(callback)
+            } else {
+                loadMore(this, callback)
+            }
         }
+
+    private fun firstList(callback: GetFeedInteractor.Callback) {
+        feedRepository.firstList(Callback(mainThread, callback))
     }
 
-    private fun firstList() {
-        feedRepository.firstList(Callback())
-    }
+    private fun loadMore(params: GetFeedInteractor.Params, callback: GetFeedInteractor.Callback) =
+        params.run {
+            feedRepository.loadMore(page, timestamp, Callback(mainThread, callback))
+        }
 
-    private fun loadMore(page: Int, timestamp: Int) {
-        feedRepository.loadMore(page, timestamp, Callback())
-    }
-
-    private inner class Callback : FeedCallback {
+    private class Callback(
+        private val mainThread: MainThread,
+        private val callback: GetFeedInteractor.Callback,
+    ) : FeedCallback {
         override fun onSuccess(
             feedItems: List<FeedItem>,
             page: Int,

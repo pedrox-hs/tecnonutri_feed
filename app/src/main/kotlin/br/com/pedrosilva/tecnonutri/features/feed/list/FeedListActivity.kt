@@ -4,30 +4,25 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.R
-import br.com.pedrosilva.tecnonutri.features.common.view.HasPresenter
+import br.com.pedrosilva.tecnonutri.features.common.Navigator
 import br.com.pedrosilva.tecnonutri.features.common.error.ErrorData
 import br.com.pedrosilva.tecnonutri.features.common.listener.EndlessRecyclerViewScrollListener
-import br.com.pedrosilva.tecnonutri.features.common.Navigator
 import br.com.pedrosilva.tecnonutri.features.common.view.BaseActivity
-import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
-import com.pedrenrique.tecnonutri.data.repositories.FeedRepositoryImpl
+import br.com.pedrosilva.tecnonutri.features.common.view.HasPresenter
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.Profile
-import com.pedrenrique.tecnonutri.domain.executor.impl.ThreadExecutor
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.rv_feed
 import kotlinx.android.synthetic.main.activity_main.swipe_refresh
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FeedListActivity : BaseActivity(), FeedListContract.View,
     HasPresenter {
 
-    override val presenter: FeedListContract.FeedPresenter by lazy {
-        FeedListPresenter(
-            this,
-            ThreadExecutor.instance,
-            MainThreadImpl.instance,
-            FeedRepositoryImpl()
-        )
-    }
+    @Inject
+    override lateinit var presenter: FeedListContract.Presenter
+
     private val feedAdapter by lazy { FeedListAdapter() }
     private val RecyclerView.linearLayoutManager: LinearLayoutManager
         get() = layoutManager as LinearLayoutManager
@@ -71,14 +66,6 @@ class FeedListActivity : BaseActivity(), FeedListContract.View,
             ) { _, _ ->
                 presenter.loadMore(nextPage, timestamp)
             }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        feedAdapter.run {
-            items.map { item -> item.copy(isLiked = presenter.isLiked(item.id)) }
-            notifyDataSetChanged()
-        }
     }
 
     override fun onLoadFeed(

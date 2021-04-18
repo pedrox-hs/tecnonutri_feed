@@ -10,8 +10,6 @@ interface FeedRepository {
 
     fun dislikeItem(feedHash: String)
 
-    fun isLiked(feedHash: String): Boolean
-
     fun firstList(callback: FeedCallback)
 
     fun loadMore(page: Int, timestamp: Int, callback: FeedCallback)

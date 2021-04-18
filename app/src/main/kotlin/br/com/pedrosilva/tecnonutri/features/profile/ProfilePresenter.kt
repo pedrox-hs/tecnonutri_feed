@@ -1,51 +1,32 @@
 package br.com.pedrosilva.tecnonutri.features.profile
 
+import br.com.pedrosilva.tecnonutri.features.common.presenter.AbstractPresenter
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.Profile
-import com.pedrenrique.tecnonutri.domain.executor.Executor
-import com.pedrenrique.tecnonutri.domain.executor.MainThread
 import com.pedrenrique.tecnonutri.domain.interactors.GetProfileInteractor
-import com.pedrenrique.tecnonutri.domain.interactors.base.Interactor
-import com.pedrenrique.tecnonutri.domain.interactors.impl.GetProfileInteractorImpl
-import com.pedrenrique.tecnonutri.domain.repositories.ProfileRepository
-import br.com.pedrosilva.tecnonutri.features.common.presenter.AbstractPresenter
+import javax.inject.Inject
 
-class ProfilePresenter(
+class ProfilePresenter @Inject constructor(
     view: ProfileContract.View,
-    executor: Executor,
-    mainThread: MainThread,
-    private val profileRepository: ProfileRepository,
-    private val userId: Int
-) : AbstractPresenter<ProfileContract.View>(view, executor, mainThread),
+    private val getProfileInteractor: GetProfileInteractor,
+) : AbstractPresenter<ProfileContract.View>(view),
     ProfileContract.Presenter,
     GetProfileInteractor.Callback {
+
+    private val userId: Int by lazy {
+        super.view?.profileUserId ?: 0
+    }
 
     override fun create() {
         load()
     }
 
     private fun load() {
-        val interactor: Interactor = GetProfileInteractorImpl(
-            executor,
-            mainThread,
-            profileRepository,
-            userId,
-            this
-        )
-        interactor.execute()
+        getProfileInteractor.execute(GetProfileInteractor.Params(userId), this)
     }
 
     override fun loadMore(page: Int, timestamp: Int) {
-        val interactor: Interactor = GetProfileInteractorImpl(
-            executor,
-            mainThread,
-            profileRepository,
-            userId,
-            this,
-            page,
-            timestamp
-        )
-        interactor.execute()
+        getProfileInteractor.execute(GetProfileInteractor.Params(userId, page, timestamp), this)
     }
 
     override fun refresh() {

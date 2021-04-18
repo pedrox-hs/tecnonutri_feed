@@ -20,6 +20,7 @@ import com.pedrenrique.tecnonutri.domain.Profile
 import com.pedrenrique.tecnonutri.domain.executor.impl.ThreadExecutor
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_post_details.cb_like
 import kotlinx.android.synthetic.main.activity_post_details.iv_meal
 import kotlinx.android.synthetic.main.activity_post_details.iv_profile_image
@@ -30,7 +31,9 @@ import kotlinx.android.synthetic.main.activity_post_details.swipe_refresh
 import kotlinx.android.synthetic.main.activity_post_details.tv_profile_general_goal
 import kotlinx.android.synthetic.main.activity_post_details.tv_profile_name
 import java.util.Date
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FeedDetailActivity : BaseActivity(),
     FeedDetailContract.View,
     HasPresenter {
@@ -48,7 +51,10 @@ class FeedDetailActivity : BaseActivity(),
         }
     }
 
-    private val feedHash by lazy {
+    @Inject
+    override lateinit var presenter: FeedDetailContract.Presenter
+
+    override val currentFeedHash: String by lazy {
         intent.getStringExtra(EXTRA_FEED_ITEM_HASH) ?: ""
     }
     private val itemDate: Date by lazy {
@@ -58,15 +64,6 @@ class FeedDetailActivity : BaseActivity(),
     private var feedItem: FeedItem? = null
     private val profile: Profile? get() = feedItem?.profile
 
-    override val presenter: FeedDetailContract.Presenter by lazy {
-        FeedDetailPresenter(
-            this,
-            ThreadExecutor.instance,
-            MainThreadImpl.instance,
-            FeedRepositoryImpl(),
-            feedHash
-        )
-    }
     private val foodAdapter: FoodAdapter by lazy { FoodAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,11 +81,6 @@ class FeedDetailActivity : BaseActivity(),
         init()
     }
 
-    override fun onResume() {
-        super.onResume()
-        cb_like.isChecked = presenter.isLiked(feedHash)
-    }
-
     private fun init() {
         setupRecyclerView()
 
@@ -104,8 +96,8 @@ class FeedDetailActivity : BaseActivity(),
 
         swipe_refresh.setOnRefreshListener { presenter.reload() }
 
-        cb_like.setOnClickListener { view ->
-            presenter.changeLike(feedHash, (view as CheckBox).isChecked)
+        cb_like.setOnCheckedChangeListener { _, isChecked ->
+            presenter.changeLike(isChecked)
         }
     }
 

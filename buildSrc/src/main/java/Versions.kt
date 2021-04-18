@@ -5,6 +5,7 @@ object Versions {
     const val firebaseCrashlytics = "2.5.2"
     const val realm = "6.0.2"
     const val hilt = "2.34-beta"
+    const val dagger = "2.34.1"
 
     const val appCompat = "1.2.0"
     const val materialDesign = "1.3.0"

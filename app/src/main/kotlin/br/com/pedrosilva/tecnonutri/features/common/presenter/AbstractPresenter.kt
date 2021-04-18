@@ -10,9 +10,7 @@ import com.pedrenrique.tecnonutri.domain.executor.MainThread
  * reference to the Executor and MainThread objects that are needed for running interactors in a background thread.
  */
 abstract class AbstractPresenter<View : BaseView>(
-    override var view: View?,
-    protected var executor: Executor,
-    protected var mainThread: MainThread
+    override var view: View?
 ) : BasePresenter<View> {
 
     override fun create() {}

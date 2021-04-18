@@ -6,8 +6,7 @@ import br.com.pedrosilva.tecnonutri.features.common.view.BaseView
 
 interface FeedListContract {
 
-    interface FeedPresenter :
-        BasePresenter<View> {
+    interface Presenter : BasePresenter<View> {
 
         fun load()
 
@@ -16,8 +15,6 @@ interface FeedListContract {
         fun refresh()
 
         fun changeLike(feedHash: String, liked: Boolean)
-
-        fun isLiked(feedHash: String): Boolean
     }
 
     interface View : BaseView {

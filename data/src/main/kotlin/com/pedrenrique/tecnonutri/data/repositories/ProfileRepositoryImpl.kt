@@ -8,8 +8,9 @@ import com.pedrenrique.tecnonutri.data.net.services.ProfileService
 import com.pedrenrique.tecnonutri.domain.repositories.ProfileRepository
 import com.pedrenrique.tecnonutri.domain.repositories.ProfileRepository.ProfileCallback
 import retrofit2.Call
+import javax.inject.Inject
 
-class ProfileRepositoryImpl : ProfileRepository {
+class ProfileRepositoryImpl @Inject constructor() : ProfileRepository {
 
     private val apiService by lazy {
         ApiServiceGenerator.getService<ProfileService>()

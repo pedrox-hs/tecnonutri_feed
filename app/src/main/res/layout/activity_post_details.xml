@@ -108,7 +108,7 @@
                     android:paddingBottom="8dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-                <CheckBox
+                <com.google.android.material.checkbox.MaterialCheckBox
                   android:id="@+id/cb_like"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"

@@ -15,10 +15,10 @@ import com.pedrenrique.tecnonutri.domain.executor.MainThread
  * For example, when an activity is getting destroyed then we should probably cancel an interactor
  * but the request will come from the UI thread unless the request was specifically assigned to a background thread.
  */
-abstract class AbstractInteractor(
+abstract class AbstractInteractor<Params, Callback>(
     private var threadExecutor: Executor,
     protected var mainThread: MainThread
-) : Interactor {
+) : Interactor<Params, Callback> {
 
     @Volatile
     protected var isCanceled = false
@@ -35,9 +35,9 @@ abstract class AbstractInteractor(
      * This method should only be called directly while doing unit/integration tests. That is the only reason it is declared
      * public as to help with easier testing.
      */
-    abstract fun run()
+    abstract fun run(params: Params, callback: Callback)
 
-    fun cancel() {
+    override fun cancel() {
         isCanceled = true
         isRunning = false
     }
@@ -47,12 +47,12 @@ abstract class AbstractInteractor(
         isCanceled = false
     }
 
-    override fun execute() {
+    override fun execute(params: Params, callback: Callback) {
 
         // mark this interactor as running
         isRunning = true
 
         // start running this interactor in a background thread
-        threadExecutor.execute(this)
+        threadExecutor.execute(this, params, callback)
     }
 }

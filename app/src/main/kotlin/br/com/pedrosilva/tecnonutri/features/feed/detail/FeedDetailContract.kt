@@ -6,17 +6,17 @@ import br.com.pedrosilva.tecnonutri.features.common.view.BaseView
 
 interface FeedDetailContract {
 
-    interface Presenter :
-        BasePresenter<View> {
+    interface Presenter : BasePresenter<View> {
 
         fun reload()
 
-        fun changeLike(feedHash: String, liked: Boolean)
-
-        fun isLiked(feedHash: String): Boolean
+        fun changeLike(liked: Boolean)
     }
 
     interface View : BaseView {
+
+        val currentFeedHash: String
+
         fun onLoadFeedItem(item: FeedItem)
 
         fun onLoadFail(error: Throwable)
