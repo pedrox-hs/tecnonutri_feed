@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.R
+import br.com.pedrosilva.tecnonutri.ext.format
 import br.com.pedrosilva.tecnonutri.features.common.view.GenericAdapter
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.Profile
@@ -81,7 +82,7 @@ class FeedListAdapter : GenericAdapter<FeedItem, RecyclerView.ViewHolder>(true) 
 
             val profile = feedItem.profile
             val resources = itemView.context.resources
-            val dateFormatted = AppUtil.formatDate(feedItem.date)
+            val dateFormatted = feedItem.date.format(context)
 
             iv_profile_image.setImageResource(R.drawable.profile_image_placeholder)
             iv_meal.setImageDrawable(null)

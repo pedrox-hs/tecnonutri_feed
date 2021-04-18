@@ -1,13 +1,7 @@
 package br.com.pedrosilva.tecnonutri.util
 
-import android.util.TypedValue
-import br.com.pedrosilva.tecnonutri.R
-import br.com.pedrosilva.tecnonutri.util.ContextHelper.applicationContext
-import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.NumberFormat
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 object AppUtil {
@@ -19,15 +13,6 @@ object AppUtil {
 
     @Suppress("UNCHECKED_CAST")
     operator fun <T> get(element: Any): T = element as T
-
-    fun formatDate(date: Date): String =
-        formatDate(date, applicationContext!!.getString(R.string.date_format))
-
-    private fun formatDate(date: Date, pattern: String): String {
-        val dateTimeFormat: DateFormat =
-            SimpleDateFormat(pattern, Locale.getDefault())
-        return dateTimeFormat.format(date)
-    }
 
     private fun formatDecimal(number: Number, pattern: String): String {
         val decimalFormat =
@@ -44,11 +29,4 @@ object AppUtil {
 
     fun formatWeight(number: Number): String =
         formatDecimal(number, PATTERN_WEIGHT)
-
-    fun dp2Px(dp: Int): Int =
-        TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            500f,
-            applicationContext!!.resources.displayMetrics
-        ).toInt()
 }

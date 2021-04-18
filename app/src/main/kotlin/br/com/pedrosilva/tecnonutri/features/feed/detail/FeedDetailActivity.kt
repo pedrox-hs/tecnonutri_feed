@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.CheckBox
 import br.com.pedrosilva.tecnonutri.R
+import br.com.pedrosilva.tecnonutri.ext.format
 import br.com.pedrosilva.tecnonutri.features.common.Navigator
 import br.com.pedrosilva.tecnonutri.features.common.view.HasPresenter
 import br.com.pedrosilva.tecnonutri.features.common.error.ErrorData
@@ -13,7 +14,6 @@ import br.com.pedrosilva.tecnonutri.features.common.listener.setSingleOnClickLis
 import br.com.pedrosilva.tecnonutri.features.common.widget.CircleTransformation
 import br.com.pedrosilva.tecnonutri.features.common.view.BaseActivity
 import br.com.pedrosilva.tecnonutri.threading.MainThreadImpl
-import br.com.pedrosilva.tecnonutri.util.AppUtil
 import com.pedrenrique.tecnonutri.data.repositories.FeedRepositoryImpl
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.Profile
@@ -92,7 +92,7 @@ class FeedDetailActivity : BaseActivity(),
     private fun init() {
         setupRecyclerView()
 
-        val dateFormatted = AppUtil.formatDate(itemDate)
+        val dateFormatted = itemDate.format(this)
         title = getString(R.string.meal_date, dateFormatted)
 
 
