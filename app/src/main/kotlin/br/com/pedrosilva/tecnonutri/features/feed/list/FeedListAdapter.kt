@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.R
 import br.com.pedrosilva.tecnonutri.ext.format
+import br.com.pedrosilva.tecnonutri.ext.formatKcal
 import br.com.pedrosilva.tecnonutri.features.common.view.GenericAdapter
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.Profile
@@ -14,7 +15,6 @@ import br.com.pedrosilva.tecnonutri.features.common.listener.ChangeLikeListener
 import br.com.pedrosilva.tecnonutri.features.common.listener.FeedItemClickListener
 import br.com.pedrosilva.tecnonutri.features.common.listener.ProfileClickListener
 import br.com.pedrosilva.tecnonutri.features.common.listener.setSingleOnClickListener
-import br.com.pedrosilva.tecnonutri.util.AppUtil
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_feed.view.cb_like
@@ -92,7 +92,7 @@ class FeedListAdapter : GenericAdapter<FeedItem, RecyclerView.ViewHolder>(true) 
             tv_profile_general_goal.text = profile.generalGoal
             tv_meal_date.text = resources.getString(R.string.meal_date, dateFormatted)
             tv_energy.text =
-                resources.getString(R.string.qty_energy, AppUtil.formatKcal(feedItem.energy!!))
+                resources.getString(R.string.qty_energy, feedItem.energy?.formatKcal().orEmpty())
 
             loadImages(profile, feedItem)
         }

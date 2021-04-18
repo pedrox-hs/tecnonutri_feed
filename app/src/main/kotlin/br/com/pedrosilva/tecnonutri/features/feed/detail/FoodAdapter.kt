@@ -1,13 +1,16 @@
 package br.com.pedrosilva.tecnonutri.features.feed.detail
 
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import br.com.pedrosilva.tecnonutri.R
+import br.com.pedrosilva.tecnonutri.ext.formatDecimal
+import br.com.pedrosilva.tecnonutri.ext.formatKcal
+import br.com.pedrosilva.tecnonutri.ext.formatWeight
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.Food
-import br.com.pedrosilva.tecnonutri.util.AppUtil
 import kotlinx.android.synthetic.main.item_food.view.tv_description
 import kotlinx.android.synthetic.main.item_food.view.tv_qty
 import kotlinx.android.synthetic.main.item_food_nutritional.view.tv_nutritional_carbohydrate
@@ -78,18 +81,14 @@ class FoodAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             tv_description.text = food.description
             tv_qty.text = resources.getString(
                 R.string.qty_food,
-                AppUtil.formatDecimal(food.amount!!),
+                food.amount?.formatDecimal().orEmpty(),
                 food.measure,
-                AppUtil.formatWeight(food.weight!!)
+                food.weight?.formatWeight().orEmpty()
             )
-            tv_nutritional_energy.text =
-                resources.getString(R.string.qty_energy, AppUtil.formatKcal(food.energy!!))
-            tv_nutritional_carbohydrate.text =
-                resources.getString(R.string.weight, AppUtil.formatWeight(food.carbohydrate!!))
-            tv_nutritional_protein.text =
-                resources.getString(R.string.weight, AppUtil.formatWeight(food.protein!!))
-            tv_nutritional_fat.text =
-                resources.getString(R.string.weight, AppUtil.formatWeight(food.fat!!))
+            tv_nutritional_energy.text = food.energy?.formatKcal(resources)
+            tv_nutritional_carbohydrate.text = food.carbohydrate?.formatWeight(resources)
+            tv_nutritional_protein.text = food.protein?.formatWeight(resources)
+            tv_nutritional_fat.text = food.fat?.formatWeight(resources)
         }
     }
 
@@ -97,14 +96,16 @@ class FoodAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun setup(feedItem: FeedItem) = itemView.run {
             val resources = itemView.context.resources
-            tv_nutritional_energy.text =
-                resources.getString(R.string.qty_energy, AppUtil.formatKcal(feedItem.energy!!))
-            tv_nutritional_carbohydrate.text =
-                resources.getString(R.string.weight, AppUtil.formatWeight(feedItem.carbohydrate!!))
-            tv_nutritional_protein.text =
-                resources.getString(R.string.weight, AppUtil.formatWeight(feedItem.protein!!))
-            tv_nutritional_fat.text =
-                resources.getString(R.string.weight, AppUtil.formatWeight(feedItem.fat!!))
+            tv_nutritional_energy.text = feedItem.energy?.formatKcal(resources)
+            tv_nutritional_carbohydrate.text = feedItem.carbohydrate?.formatWeight(resources)
+            tv_nutritional_protein.text = feedItem.protein?.formatWeight(resources)
+            tv_nutritional_fat.text = feedItem.fat?.formatWeight(resources)
         }
     }
+
+    private fun Number.formatKcal(resources: Resources) =
+        resources.getString(R.string.qty_energy, formatKcal().orEmpty())
+
+    private fun Number.formatWeight(resources: Resources) =
+        resources.getString(R.string.weight, formatWeight().orEmpty())
 }
