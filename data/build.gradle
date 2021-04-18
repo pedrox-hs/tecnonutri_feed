@@ -33,6 +33,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         incremental = false
     }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
 }
 
 dependencies {
@@ -46,9 +50,9 @@ dependencies {
     kapt Libs.daggerCompiler
 
     // network
-    implementation Libs.retrofit
+    api Libs.retrofit
+    api Libs.gson
     implementation Libs.okHttpLogging
-    implementation Libs.gson
 
     testImplementation TestLibs.junit
 

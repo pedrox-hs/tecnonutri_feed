@@ -9,14 +9,13 @@ import br.com.pedrosilva.tecnonutri.features.feed.list.FeedListPresenter
 import br.com.pedrosilva.tecnonutri.features.profile.ProfileActivity
 import br.com.pedrosilva.tecnonutri.features.profile.ProfileContract
 import br.com.pedrosilva.tecnonutri.features.profile.ProfilePresenter
-import com.pedrenrique.tecnonutri.data.di.DataModule
 import com.pedrenrique.tecnonutri.domain.di.DomainModule
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 
-@Module(includes = [DataModule::class, DomainModule::class])
+@Module(includes = [DomainModule::class])
 @InstallIn(ActivityComponent::class)
 abstract class PresentationModule {
 

@@ -13,8 +13,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import javax.inject.Inject
 
-internal class GsonUTCDateAdapter : JsonSerializer<Date>, JsonDeserializer<Date> {
+internal class GsonUTCDateAdapter @Inject constructor() : JsonSerializer<Date>,
+    JsonDeserializer<Date> {
 
     private val dateFormatStr = "yyyy-MM-dd" // "yyyy-MM-dd'T'HH:mm:ss.SSS"
     private val dateFormat: DateFormat = SimpleDateFormat(dateFormatStr, Locale.US)

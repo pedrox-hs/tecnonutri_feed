@@ -5,7 +5,6 @@ import com.pedrenrique.tecnonutri.data.datasource.RealmManager
 import com.pedrenrique.tecnonutri.data.entities.FeedResponse
 import com.pedrenrique.tecnonutri.data.entities.LikedFeedItem
 import com.pedrenrique.tecnonutri.data.ext.getBodyOrThrow
-import com.pedrenrique.tecnonutri.data.net.ApiServiceGenerator
 import com.pedrenrique.tecnonutri.data.net.services.FeedService
 import com.pedrenrique.tecnonutri.domain.FeedItem
 import com.pedrenrique.tecnonutri.domain.repositories.FeedRepository
@@ -14,13 +13,10 @@ import com.pedrenrique.tecnonutri.domain.repositories.FeedRepository.FeedItemCal
 import retrofit2.Call
 import javax.inject.Inject
 
-class FeedRepositoryImpl @Inject constructor(
-    private val manager: RealmManager
+internal class FeedRepositoryImpl @Inject constructor(
+    private val manager: RealmManager,
+    private val apiService: FeedService,
 ) : FeedRepository {
-
-    private val apiService by lazy {
-        ApiServiceGenerator.getService<FeedService>()
-    }
 
     override fun get(feedHash: String, callback: FeedItemCallback) {
         try {

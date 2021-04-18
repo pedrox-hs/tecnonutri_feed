@@ -11,7 +11,7 @@ import io.realm.RealmConfiguration
 import io.realm.RealmMigration
 
 @Module
-abstract class StorageModule {
+internal abstract class StorageModule {
 
     companion object {
 

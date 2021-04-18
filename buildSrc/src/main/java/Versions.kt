@@ -20,8 +20,8 @@ object Versions {
 
     const val firebase = "27.0.0"
 
-    const val retrofit = "2.7.2"
-    const val okHttpLogging = "4.2.2"
+    const val retrofit = "2.9.0"
+    const val okHttpLogging = "4.9.1"
 
     const val junit = "4.13.2"
     const val mockito = "3.9.0"

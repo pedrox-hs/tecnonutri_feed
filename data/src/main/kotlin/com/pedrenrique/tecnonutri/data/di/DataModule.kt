@@ -7,12 +7,12 @@ import com.pedrenrique.tecnonutri.domain.repositories.ProfileRepository
 import dagger.Binds
 import dagger.Module
 
-@Module(includes = [StorageModule::class])
-interface DataModule {
+@Module(includes = [StorageModule::class, ApiModule::class])
+abstract class DataModule {
 
     @Binds
-    fun bindFeedRepository(repository: FeedRepositoryImpl): FeedRepository
+    internal abstract fun bindFeedRepository(repository: FeedRepositoryImpl): FeedRepository
 
     @Binds
-    fun bindProfileRepository(repository: ProfileRepositoryImpl): ProfileRepository
+    internal abstract fun bindProfileRepository(repository: ProfileRepositoryImpl): ProfileRepository
 }
